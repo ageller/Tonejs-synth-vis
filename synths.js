@@ -26,7 +26,7 @@ function setupKick(steps){
 	function addKickStep(elem){
 		elem.style.backgroundColor = 'white'
 		elem.playMe = !elem.playMe;
-		if (elem.playMe) elem.style.backgroundColor = 'blue'
+		if (elem.playMe) elem.style.backgroundColor = 'rgb(0,0,255)'; //could use the visParams for this
 	}
 	for (var i = 0; i < kickSteps.length; i++) {
 		kickSteps[i].playMe = false;
@@ -54,9 +54,21 @@ function setupSnare(){
 	snare.fan(snareWaveform, snareFFT);
 
 	//for loop
-	var snarePart = new Tone.Loop(function(time){
-		snare.triggerAttack(time);
-	}, "2n").start("4n");
+	// var snarePart = new Tone.Loop(function(time){
+	// 	snare.triggerAttack(time);
+	// }, "2n").start("4n");
+
+	//in the step bar
+	var snareSteps = document.getElementById("snare-selector").querySelectorAll(".step");
+	function addSnareStep(elem){
+		elem.style.backgroundColor = 'white'
+		elem.playMe = !elem.playMe;
+		if (elem.playMe) elem.style.backgroundColor = 'rgb(0,255,0)'
+	}
+	for (var i = 0; i < snareSteps.length; i++) {
+		snareSteps[i].playMe = false;
+		snareSteps[i].addEventListener('mousedown', function(){addSnareStep(this)});
+	}
 }
 
 function setupBass(){
@@ -158,10 +170,14 @@ function repeat(time) {
 	for (var i = 0; i < stepDOMs.length; i++) {
 		stepDOMs[i].style.borderColor = "lightgray";
 	}
-	var step = document.getElementById('step' + stepIndex);
-	step.style.borderColor = 'black';
-	
-	if (step.playMe) kick.triggerAttackRelease("C2", "8n", time);
+
+	kickStep = document.getElementById("kick-selector").querySelectorAll(".step")[stepIndex];
+	kickStep.style.borderColor = 'black';
+	if (kickStep.playMe) kick.triggerAttackRelease("C2", "8n", time);
+
+	snareStep = document.getElementById("snare-selector").querySelectorAll(".step")[stepIndex];
+	snareStep.style.borderColor = 'black';
+	if (snareStep.playMe) snare.triggerAttackRelease(time);
 
 	stepIndex = (stepIndex + 1) % 8;
 
