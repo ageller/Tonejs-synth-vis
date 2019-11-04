@@ -1,0 +1,28 @@
+<!-- https://dev.to/shimphillip/building-a-piano-with-tone-js-5c2f -->
+<html>
+	<head>
+		<meta charset="utf-8">
+			<title>Synth Test</title>
+
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+			<script src="lib/Tone.js"></script> <!-- this gives an error, but still appears to work -->
+			<script src="lib/tonejs-ui.js"></script> 
+			<script src="lib/p5.js"></script>
+
+	</head>
+
+
+		<div style="position:absolute; top:10px; left:50px; width:500px">
+			<tone-piano polyphonic></tone-piano>
+			<tone-synth polyphonic></tone-synth>
+
+		</div>
+
+		<div id='vis-holder' style="position:absolute; top:10px; left:600px;"></div>
+
+		<script src="polysynth.js"></script>
+		<script src="vis.js"></script>
+
+	</body>
+</html>
