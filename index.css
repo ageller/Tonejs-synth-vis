@@ -1,0 +1,11 @@
+.stepContainer {
+	width:160px;
+	height:20px;
+}
+.step {
+	float:left;
+	width:10%;
+	padding-top: 10%; /* 1:1 Aspect Ratio */
+	border:2px solid lightgray;
+	cursor:pointer;
+}

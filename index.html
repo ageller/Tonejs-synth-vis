@@ -5,6 +5,7 @@
 			<title>Synth Test</title>
 
 			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        	<link rel="stylesheet" type="text/css" href="index.css" />
 
 			<script src="lib/Tone.js"></script> <!-- this gives an error, but still appears to work -->
 			<script src="lib/tonejs-ui.js"></script> 
@@ -19,7 +20,18 @@
 
 		<!-- I should generate these in the javascript, so that I can position things better -->
 		<div id='kick-holder' style="position:absolute; top:60px; left:0px;">
-			<div id='kick-selector' style="position:absolute; left:0px; width:50px"></div>
+			<div id='kick-selector' style="position:absolute; left:0px; top:40px">
+				<div class="stepContainer">
+					<div class="step" id="step0"></div>
+					<div class="step" id="step1"></div>
+					<div class="step" id="step2"></div>
+					<div class="step" id="step3"></div>
+					<div class="step" id="step4"></div>
+					<div class="step" id="step5"></div>
+					<div class="step" id="step6"></div>
+					<div class="step" id="step7"></div>
+				</div>
+			</div>
 			<div id='kick-vis' style="position:absolute; left:200px; top:0px"></div>
 		</div>
 
@@ -34,7 +46,7 @@
 		</div>
 
 		<div id='piano-holder' style="position:absolute; top:360px; left:0px;">
-			<div style="position:absolute; left:10px; top:10px; width:50px">
+			<div style="position:absolute; left:10px; top:40px; width:50px">
 				<select id='piano-oscillator-select' onchange=setPianoOscillator(this)>
 					<option value="square">square</option>
 					<option value="sine">sine</option>

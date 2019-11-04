@@ -2,9 +2,11 @@ var kick,  kickWaveform,  kickFFT;
 var snare, snareWaveform, snareFFT;
 var bass,  bassWaveform,  bassFFT;
 var piano, pianoWaveform, pianoFFT;
+var stepIndex = 0;
+var play = false;
 
 //taken from the events example
-function setupKick(){
+function setupKick(steps){
 	kick = new Tone.MembraneSynth({
 		"envelope" : {
 			"sustain" : 0,
@@ -18,10 +20,18 @@ function setupKick(){
 	kickWaveform = new Tone.Analyser("waveform", 1024);
 	kick.fan(kickWaveform, kickFFT);
 
-	//for loop
-	var kickPart = new Tone.Loop(function(time){
-		kick.triggerAttackRelease("C2", "8n", time);
-	}, "2n").start(0);
+
+	//in the step bar
+	var kickSteps = document.getElementById("kick-selector").querySelectorAll(".step");
+	function addKickStep(elem){
+		elem.style.backgroundColor = 'white'
+		elem.playMe = !elem.playMe;
+		if (elem.playMe) elem.style.backgroundColor = 'blue'
+	}
+	for (var i = 0; i < kickSteps.length; i++) {
+		kickSteps[i].playMe = false;
+		kickSteps[i].addEventListener('mousedown', function(){addKickStep(this)});
+	}
 }
 
 function setupSnare(){
@@ -104,12 +114,12 @@ function setupPiano(oscillator){
 	pianoPart.humanize = true;
 
 }
-
 function setPianoOscillator(selection){
 	setupPiano(selection.value);
 	visParams['piano-vis'].waveform = pianoWaveform;
 	visParams['piano-vis'].fft = pianoFFT;
 }
+
 function setupSynths(){
 
 	setupKick();
@@ -139,12 +149,37 @@ function setupSynths(){
 
 	document.querySelector("tone-play-toggle").bind(Tone.Transport);
 
+
 }
 
+function repeat(time) {
+	//change the step boxes
+	var stepDOMs = document.getElementsByClassName('step');
+	for (var i = 0; i < stepDOMs.length; i++) {
+		stepDOMs[i].style.borderColor = "lightgray";
+	}
+	var step = document.getElementById('step' + stepIndex);
+	step.style.borderColor = 'black';
+	
+	if (step.playMe) kick.triggerAttackRelease("C2", "8n", time);
+
+	stepIndex = (stepIndex + 1) % 8;
+
+}
 
 window.onload = function() {
 	setupSynths();
+
+	Tone.Transport.scheduleRepeat(repeat, '8n'); //for step sequencing
+
+	//reset the step counter with play/stop (can simplify this selection if I use the steps for all)
+	document.getElementsByTagName('tone-play-toggle')[0].addEventListener('mousedown', function(){
+		stepIndex = 0
+	});
+
 }
+
+
 
 
 
