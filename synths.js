@@ -113,11 +113,11 @@ function setupBass(){
 
 	//create the step bar
 	var bassStep = document.getElementById("bass-selector").querySelectorAll(".stepContainer");
-	createSteps(bassStep[0], 'rgb(255, 0, 0)', 1, 'A1') //should use the visParams for this color
-	createSteps(bassStep[0], 'rgb(255, 0, 0)', 2, 'C2') 
+	createSteps(bassStep[0], 'rgb(255, 0, 0)', 1, 'C3') //should use the visParams for this color
+	createSteps(bassStep[0], 'rgb(255, 0, 0)', 2, 'E2') 
 	createSteps(bassStep[0], 'rgb(255, 0, 0)', 3, 'D2') 
-	createSteps(bassStep[0], 'rgb(255, 0, 0)', 4, 'E2') 
-	createSteps(bassStep[0], 'rgb(255, 0, 0)', 5, 'C3') 
+	createSteps(bassStep[0], 'rgb(255, 0, 0)', 4, 'C2') 
+	createSteps(bassStep[0], 'rgb(255, 0, 0)', 5, 'A1') 
 }
 
 function setupPiano(oscillator){
@@ -237,17 +237,17 @@ function loadPreset(preset=1){
 		steps = [beat, 3*beat, 5*beat, nSteps-beat];
 		steps.forEach(function(i){addStep(snareSteps[i],'rgb(0,255,0');})//this color should be set from the vis params
 
-		//notes go from low to high in rows
+		//notes go from low (row5) to high (row1) in rows
 		var bassSteps1 = document.getElementById("bass-selector").querySelectorAll(".step.row1");
 		var bassSteps2 = document.getElementById("bass-selector").querySelectorAll(".step.row2");
 		var bassSteps3 = document.getElementById("bass-selector").querySelectorAll(".step.row3");
 		var bassSteps4 = document.getElementById("bass-selector").querySelectorAll(".step.row4");
 		var bassSteps5 = document.getElementById("bass-selector").querySelectorAll(".step.row5");
-		steps1 = [nSteps-beat];
-		steps2= [0];
+		steps1= [2*beat, 3*beat];
+		steps2= [4*beat];
 		steps3= [Math.floor(3.5*beat), 6*beat];
-		steps4= [4*beat];
-		steps5= [2*beat, 3*beat];
+		steps4= [0];
+		steps5 = [nSteps-beat];
 		steps1.forEach(function(i){addStep(bassSteps1[i],'rgb(255,0,0');})//this color should be set from the vis params
 		steps2.forEach(function(i){addStep(bassSteps2[i],'rgb(255,0,0');})//this color should be set from the vis params
 		steps3.forEach(function(i){addStep(bassSteps3[i],'rgb(255,0,0');})//this color should be set from the vis params
