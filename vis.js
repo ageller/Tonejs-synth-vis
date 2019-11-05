@@ -1,10 +1,9 @@
-var windowWidth = parseFloat(window.innerWidth);
-var windowHeight = parseFloat(window.innerHeight);
 var visParams
 
 function defineVisParms(){
 	visParams = {
-		'height':100.,//px
+		'height':100.,//px //this should be decided based on the container size
+		'left':200.,//dito above
 		'kick-vis':{
 			'waveform':kickWaveform,
 			'fft':kickFFT,
@@ -36,9 +35,7 @@ var s = function(p){
 		var canvas = p.createCanvas();
 		visHolder = p.canvas.parentNode;
 
-		var left = parseFloat(visHolder.style.left);
-		var top = parseFloat(visHolder.style.top);
-		visHolder.style.width = windowWidth - left;
+		visHolder.style.width = windowWidth - visParams.left;
 		visHolder.style.height = visParams.height;
 		p.resizeCanvas(parseFloat(visHolder.style.width), parseFloat(visHolder.style.height));
 	 	p.fill(255);

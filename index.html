@@ -5,59 +5,44 @@
 			<title>Synth Test</title>
 
 			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        	<link rel="stylesheet" type="text/css" href="index.css" />
+			<link rel="stylesheet" type="text/css" href="index.css" />
+			<link href="https://fonts.googleapis.com/css?family=Josefin+Sans|Lato|Nunito|Material+Icons" rel="stylesheet">
 
 			<script src="lib/Tone.js"></script> <!-- this gives an error, but still appears to work -->
-			<script src="lib/tonejs-ui.js"></script> 
 			<script src="lib/p5.min.js"></script>
 
 	</head>
 
+		<div id="playControl" class="material-icons playControls" style="left:0px; font-size:50px">play_arrow</div>
+		<!-- labels on the buttons-->
+<!-- 		<div>
+			<div class="playInstructions" style="left:0px">play</div>
+		</div> -->
 
-		<div style="position:absolute; top:10px; left:50px; width:50px">
-			<tone-play-toggle></tone-play-toggle>
-		</div>
 
 		<!-- I should generate these in the javascript, so that I can position things better -->
-		<div id='kick-holder' style="position:absolute; top:60px; left:0px;">
-			<div id='kick-selector' style="position:absolute; left:0px; top:40px">
-				<div class="stepContainer">
-					<div class="step" id="step0"></div>
-					<div class="step" id="step1"></div>
-					<div class="step" id="step2"></div>
-					<div class="step" id="step3"></div>
-					<div class="step" id="step4"></div>
-					<div class="step" id="step5"></div>
-					<div class="step" id="step6"></div>
-					<div class="step" id="step7"></div>
-				</div>
+		<div id='kick-holder' class='instContainer' style="top:60px;">
+			<div id='kick-selector' class='instControls'>
+				<div class="stepContainer"></div>
 			</div>
-			<div id='kick-vis' style="position:absolute; left:200px; top:0px"></div>
+			<div id='kick-vis' class='instVis'></div>
 		</div>
 
-		<div id='snare-holder' style="position:absolute; top:160px; left:0px;">
-			<div id='snare-selector' style="position:absolute; left:0px; top:40px">
-				<div class="stepContainer">
-					<div class="step" id="step0"></div>
-					<div class="step" id="step1"></div>
-					<div class="step" id="step2"></div>
-					<div class="step" id="step3"></div>
-					<div class="step" id="step4"></div>
-					<div class="step" id="step5"></div>
-					<div class="step" id="step6"></div>
-					<div class="step" id="step7"></div>
-				</div>
-
+		<div id='snare-holder' class='instContainer' style="top:210px;">
+			<div id='snare-selector' class='instControls'>
+				<div class="stepContainer"></div>
 			</div>
-			<div id='snare-vis' style="position:absolute; left:200px; top:0px"></div>
+			<div id='snare-vis' class='instVis'></div>
 		</div>
 
-		<div id='bass-holder' style="position:absolute; top:260px; left:0px;">
-			<div id='bass-selector' style="position:absolute; left:0px; width:50px"></div>
-			<div id='bass-vis' style="position:absolute; left:200px; top:0px"></div>
+		<div id='bass-holder' class='instContainer' style="top:360px; height:240px">
+			<div id='bass-selector' class='instControls'>
+				<div class="stepContainer"></div>
+			</div>
+			<div id='bass-vis' class='instVis' style="top:140px"></div>
 		</div>
 
-		<div id='piano-holder' style="position:absolute; top:360px; left:0px;">
+		<div id='piano-holder' style="position:absolute; top:660px; left:0px;">
 			<div style="position:absolute; left:10px; top:40px; width:50px">
 				<select id='piano-oscillator-select' onchange=setPianoOscillator(this)>
 					<option value="square">square</option>

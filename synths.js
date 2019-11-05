@@ -3,7 +3,41 @@ var snare, snareWaveform, snareFFT;
 var bass,  bassWaveform,  bassFFT;
 var piano, pianoWaveform, pianoFFT;
 var stepIndex = 0;
-var play = false;
+var nSteps = 16
+
+var windowWidth = parseFloat(window.innerWidth);
+var windowHeight = parseFloat(window.innerHeight);
+
+function addStep(elem, color, poly=false){
+	if (!poly){
+		var selectorID = elem.parentElement.parentElement.id
+		id = elem.id;
+		var col = document.getElementById("bass-selector").querySelectorAll("#"+id)
+		for (var i=0; i<col.length; i+=1) {
+			col[i].style.backgroundColor = 'white';
+			col[i].playMe = false;
+		}
+	}
+	elem.style.backgroundColor = 'white'
+	elem.playMe = !elem.playMe;
+	if (elem.playMe) elem.style.backgroundColor = color; 
+}
+
+function createSteps(elem, color, row=1, note=null){
+	elem.style.width = windowWidth - 200; //this should be tied back to the container size
+	for (var i=0; i< nSteps; i+=1){
+		var step = document.createElement("div")
+		step.className = 'step row'+row;
+		step.style.width = (parseFloat(elem.style.width) - nSteps*4)/nSteps + 'px'; //2 pixel border
+		step.id = 'step'+i;
+
+		if (note) step.note = note;
+		step.playMe = false;
+
+		step.addEventListener('mousedown', function(){addStep(this, color)});
+		elem.appendChild(step);
+	}
+}
 
 //taken from the events example
 function setupKick(steps){
@@ -20,18 +54,9 @@ function setupKick(steps){
 	kickWaveform = new Tone.Analyser("waveform", 1024);
 	kick.fan(kickWaveform, kickFFT);
 
-
-	//in the step bar
-	var kickSteps = document.getElementById("kick-selector").querySelectorAll(".step");
-	function addKickStep(elem){
-		elem.style.backgroundColor = 'white'
-		elem.playMe = !elem.playMe;
-		if (elem.playMe) elem.style.backgroundColor = 'rgb(0,0,255)'; //could use the visParams for this
-	}
-	for (var i = 0; i < kickSteps.length; i++) {
-		kickSteps[i].playMe = false;
-		kickSteps[i].addEventListener('mousedown', function(){addKickStep(this)});
-	}
+	//create the step bar
+	var kickStep = document.getElementById("kick-selector").querySelectorAll(".stepContainer");
+	createSteps(kickStep[0], 'rgb(0,0,255)') //should use the visParams for this color
 }
 
 function setupSnare(){
@@ -53,22 +78,10 @@ function setupSnare(){
 	snareWaveform = new Tone.Analyser("waveform", 1024);
 	snare.fan(snareWaveform, snareFFT);
 
-	//for loop
-	// var snarePart = new Tone.Loop(function(time){
-	// 	snare.triggerAttack(time);
-	// }, "2n").start("4n");
-
 	//in the step bar
-	var snareSteps = document.getElementById("snare-selector").querySelectorAll(".step");
-	function addSnareStep(elem){
-		elem.style.backgroundColor = 'white'
-		elem.playMe = !elem.playMe;
-		if (elem.playMe) elem.style.backgroundColor = 'rgb(0,255,0)'
-	}
-	for (var i = 0; i < snareSteps.length; i++) {
-		snareSteps[i].playMe = false;
-		snareSteps[i].addEventListener('mousedown', function(){addSnareStep(this)});
-	}
+	var snareSteps = document.getElementById("snare-selector").querySelectorAll(".stepContainer");
+	createSteps(snareSteps[0], 'rgb(0,255,0)') //should use the visParams for this color
+	
 }
 
 function setupBass(){
@@ -92,12 +105,19 @@ function setupBass(){
 	bassWaveform = new Tone.Analyser("waveform", 1024);
 	bass.fan(bassWaveform, bassFFT);
 
-	//for loop
-	var bassPart = new Tone.Sequence(function(time, note){
-		bass.triggerAttackRelease(note, "16n", time);
-	}, ["C2", ["C3", ["C3", "D2"]], "E2", ["D2", "A1"]]).start(0);
+	//for loop (original)
+	// var bassPart = new Tone.Sequence(function(time, note){
+	// 	bass.triggerAttackRelease(note, "16n", time);
+	// }, ["C2", ["C3", ["C3", "D2"]], "E2", ["D2", "A1"]]).start(0);
+	// bassPart.probability = 0.9;
 
-	bassPart.probability = 0.9;
+	//create the step bar
+	var bassStep = document.getElementById("bass-selector").querySelectorAll(".stepContainer");
+	createSteps(bassStep[0], 'rgb(255, 0, 0)', 1, 'A1') //should use the visParams for this color
+	createSteps(bassStep[0], 'rgb(255, 0, 0)', 2, 'C2') 
+	createSteps(bassStep[0], 'rgb(255, 0, 0)', 3, 'D2') 
+	createSteps(bassStep[0], 'rgb(255, 0, 0)', 4, 'E2') 
+	createSteps(bassStep[0], 'rgb(255, 0, 0)', 5, 'C3') 
 }
 
 function setupPiano(oscillator){
@@ -118,7 +138,7 @@ function setupPiano(oscillator){
 	var gChord = ["B3", "D4", "E4", "A4"];
 
 	var pianoPart = new Tone.Part(function(time, chord){
-		piano.triggerAttackRelease(chord, "8n", time);
+		piano.triggerAttackRelease(chord, nSteps+'n', time);
 	}, [["0:0:2", cChord], ["0:1", cChord], ["0:1:3", dChord], ["0:2:2", cChord], ["0:3", cChord], ["0:3:2", gChord]]).start("2m");
 
 	pianoPart.loop = true;
@@ -159,7 +179,6 @@ function setupSynths(){
 	// document.querySelector("tone-synth").bind(synth);
 
 
-	document.querySelector("tone-play-toggle").bind(Tone.Transport);
 
 
 }
@@ -173,25 +192,77 @@ function repeat(time) {
 
 	kickStep = document.getElementById("kick-selector").querySelectorAll(".step")[stepIndex];
 	kickStep.style.borderColor = 'black';
-	if (kickStep.playMe) kick.triggerAttackRelease("C2", "8n", time);
+	if (kickStep.playMe) kick.triggerAttackRelease("C2", nSteps+'n', time);
 
 	snareStep = document.getElementById("snare-selector").querySelectorAll(".step")[stepIndex];
 	snareStep.style.borderColor = 'black';
 	if (snareStep.playMe) snare.triggerAttackRelease(time);
 
-	stepIndex = (stepIndex + 1) % 8;
+	bassStep = document.getElementById("bass-selector").querySelectorAll("#step" + stepIndex);
+	for (var i=0; i<bassStep.length; i+=1){
+		bassStep[i].style.borderColor = 'black';
+		if (bassStep[i].playMe) bass.triggerAttackRelease(bassStep[i].note, "16n", time);
+	}
+
+
+
+	stepIndex = (stepIndex + 1) % nSteps;
 
 }
 
+function defineGUI(){
+	document.getElementById('playControl').addEventListener('mousedown', function(){
+		var val = this.innerHTML;
+		if (val == 'play_arrow'){
+			this.innerHTML = 'stop';
+			Tone.Transport.start();
+		} else {
+			this.innerHTML = 'play_arrow';
+			Tone.Transport.stop();
+		}
+		stepIndex = 0
+
+	});
+}
+
+function loadPreset(preset=1){
+	if (preset == 1){
+		beat = nSteps/8;
+
+		var kickSteps = document.getElementById("kick-selector").querySelectorAll(".step");
+		var steps = [0, 4*beat, nSteps-beat];
+		steps.forEach(function(i){addStep(kickSteps[i],'rgb(0,0,255');})//this color should be set from the vis params
+
+		var snareSteps = document.getElementById("snare-selector").querySelectorAll(".step");
+		steps = [beat, 3*beat, 5*beat, nSteps-beat];
+		steps.forEach(function(i){addStep(snareSteps[i],'rgb(0,255,0');})//this color should be set from the vis params
+
+		//notes go from low to high in rows
+		var bassSteps1 = document.getElementById("bass-selector").querySelectorAll(".step.row1");
+		var bassSteps2 = document.getElementById("bass-selector").querySelectorAll(".step.row2");
+		var bassSteps3 = document.getElementById("bass-selector").querySelectorAll(".step.row3");
+		var bassSteps4 = document.getElementById("bass-selector").querySelectorAll(".step.row4");
+		var bassSteps5 = document.getElementById("bass-selector").querySelectorAll(".step.row5");
+		steps1 = [nSteps-beat];
+		steps2= [0];
+		steps3= [Math.floor(3.5*beat), 6*beat];
+		steps4= [4*beat];
+		steps5= [2*beat, 3*beat];
+		steps1.forEach(function(i){addStep(bassSteps1[i],'rgb(255,0,0');})//this color should be set from the vis params
+		steps2.forEach(function(i){addStep(bassSteps2[i],'rgb(255,0,0');})//this color should be set from the vis params
+		steps3.forEach(function(i){addStep(bassSteps3[i],'rgb(255,0,0');})//this color should be set from the vis params
+		steps4.forEach(function(i){addStep(bassSteps4[i],'rgb(255,0,0');})//this color should be set from the vis params
+		steps5.forEach(function(i){addStep(bassSteps5[i],'rgb(255,0,0');})//this color should be set from the vis params
+
+	}
+
+}
 window.onload = function() {
 	setupSynths();
+	defineGUI();
+	loadPreset();
 
-	Tone.Transport.scheduleRepeat(repeat, '8n'); //for step sequencing
-
-	//reset the step counter with play/stop (can simplify this selection if I use the steps for all)
-	document.getElementsByTagName('tone-play-toggle')[0].addEventListener('mousedown', function(){
-		stepIndex = 0
-	});
+	Tone.Transport.scheduleRepeat(repeat, nSteps+'n'); //for step sequencing
 
 }
 
