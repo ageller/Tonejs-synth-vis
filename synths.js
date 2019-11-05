@@ -9,17 +9,18 @@ var windowWidth = parseFloat(window.innerWidth);
 var windowHeight = parseFloat(window.innerHeight);
 
 function addStep(elem, color, poly=false){
+	elemPlay = elem.playMe;
 	if (!poly){
 		var selectorID = elem.parentElement.parentElement.id
-		id = elem.id;
-		var col = document.getElementById("bass-selector").querySelectorAll("#"+id)
+		var cls = elem.className.split(" ")[2]
+		var col = document.getElementById("bass-selector").querySelectorAll("."+cls)
 		for (var i=0; i<col.length; i+=1) {
 			col[i].style.backgroundColor = 'white';
 			col[i].playMe = false;
 		}
 	}
 	elem.style.backgroundColor = 'white'
-	elem.playMe = !elem.playMe;
+	elem.playMe = !elemPlay;
 	if (elem.playMe) elem.style.backgroundColor = color; 
 }
 
@@ -27,9 +28,8 @@ function createSteps(elem, color, row=1, note=null){
 	elem.style.width = windowWidth - 200; //this should be tied back to the container size
 	for (var i=0; i< nSteps; i+=1){
 		var step = document.createElement("div")
-		step.className = 'step row'+row;
+		step.className = 'step row'+row+' col'+i;
 		step.style.width = (parseFloat(elem.style.width) - nSteps*4)/nSteps + 'px'; //2 pixel border
-		step.id = 'step'+i;
 
 		if (note) step.note = note;
 		step.playMe = false;
