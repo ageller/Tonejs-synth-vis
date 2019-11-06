@@ -198,7 +198,7 @@ function repeat(time) {
 	snareStep.style.borderColor = 'black';
 	if (snareStep.playMe) snare.triggerAttackRelease(time);
 
-	bassStep = document.getElementById("bass-selector").querySelectorAll("#step" + stepIndex);
+	bassStep = document.getElementById("bass-selector").querySelectorAll(".col" + stepIndex);
 	for (var i=0; i<bassStep.length; i+=1){
 		bassStep[i].style.borderColor = 'black';
 		if (bassStep[i].playMe) bass.triggerAttackRelease(bassStep[i].note, "16n", time);
