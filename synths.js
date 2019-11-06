@@ -192,7 +192,7 @@ function setupSynths(){
 
 	setupPiano('square');
 	setupPianoSteps();
-	
+
 	//set the transport 
 	Tone.Transport.bpm.value = 90;
 
@@ -235,13 +235,13 @@ function repeat(time) {
 	bassStep = document.getElementById("bass-holder").querySelectorAll(".col" + stepIndex);
 	for (var i=0; i<bassStep.length; i+=1){
 		bassStep[i].style.borderColor = 'black';
-		if (bassStep[i].playMe) bass.triggerAttackRelease(bassStep[i].note, "16n", time);
+		if (bassStep[i].playMe) bass.triggerAttackRelease(bassStep[i].note, nSteps+"n", time);
 	}
 
 	pianoStep = document.getElementById("piano-holder").querySelectorAll(".col" + stepIndex);
 	for (var i=0; i<pianoStep.length; i+=1){
 		pianoStep[i].style.borderColor = 'black';
-		if (pianoStep[i].playMe) piano.triggerAttackRelease(pianoStep[i].note, "16n", time);
+		if (pianoStep[i].playMe) piano.triggerAttackRelease(pianoStep[i].note, nSteps/2+"n", time);
 	}
 
 	stepIndex = (stepIndex + 1) % nSteps;
