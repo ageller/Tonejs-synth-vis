@@ -54,6 +54,9 @@ function setupKick(steps){
 	kickWaveform = new Tone.Analyser("waveform", 1024);
 	kick.fan(kickWaveform, kickFFT);
 
+
+}
+function setupKickSteps(){
 	//create the step bar
 	var kickStep = document.getElementById("kick-holder").querySelectorAll(".stepContainer");
 	createSteps(kickStep[0], 'rgb(0,0,255)') //should use the visParams for this color
@@ -83,6 +86,12 @@ function setupSnare(){
 	createSteps(snareSteps[0], 'rgb(0,255,0)') //should use the visParams for this color
 	
 }
+function setupSnareSteps(){
+	//in the step bar
+	var snareSteps = document.getElementById("snare-holder").querySelectorAll(".stepContainer");
+	createSteps(snareSteps[0], 'rgb(0,255,0)') //should use the visParams for this color
+
+}
 
 function setupBass(){
 	bass = new Tone.MonoSynth({
@@ -111,14 +120,18 @@ function setupBass(){
 	// }, ["C2", ["C3", ["C3", "D2"]], "E2", ["D2", "A1"]]).start(0);
 	// bassPart.probability = 0.9;
 
+
+}
+function setupBassSteps(){
 	//create the step bar
 	var bassStep = document.getElementById("bass-holder").querySelectorAll(".stepContainer");
 	createSteps(bassStep[0], 'rgb(255, 0, 0)', 1, 'C3') //should use the visParams for this color
 	createSteps(bassStep[0], 'rgb(255, 0, 0)', 2, 'E2') 
 	createSteps(bassStep[0], 'rgb(255, 0, 0)', 3, 'D2') 
 	createSteps(bassStep[0], 'rgb(255, 0, 0)', 4, 'C2') 
-	createSteps(bassStep[0], 'rgb(255, 0, 0)', 5, 'A1') 
+	createSteps(bassStep[0], 'rgb(255, 0, 0)', 5, 'A1') 	
 }
+
 
 function setupPiano(oscillator){
 	piano = new Tone.PolySynth(8, Tone.Synth, {
@@ -146,6 +159,15 @@ function setupPiano(oscillator){
 	// pianoPart.loopEnd = "1m";
 	// pianoPart.humanize = true;
 
+
+
+}
+function setPianoOscillator(selection){
+	setupPiano(selection.value);
+	visParams['piano-vis'].waveform = pianoWaveform;
+	visParams['piano-vis'].fft = pianoFFT;
+}
+function setupPianoSteps(){
 	var pianoStep = document.getElementById("piano-holder").querySelectorAll(".stepContainer");
 	createSteps(pianoStep[0], 'rgb(255, 165, 0)', 1, 'C4', true) //should use the visParams for this color
 	createSteps(pianoStep[0], 'rgb(255, 165, 0)', 2, 'D4', true) 
@@ -154,22 +176,23 @@ function setupPiano(oscillator){
 	createSteps(pianoStep[0], 'rgb(255, 165, 0)', 5, 'G4', true) 
 	createSteps(pianoStep[0], 'rgb(255, 165, 0)', 6, 'A4', true) 
 	createSteps(pianoStep[0], 'rgb(255, 165, 0)', 7, 'B4', true) 
-	createSteps(pianoStep[0], 'rgb(255, 165, 0)', 8, 'C5', true) 
-
-}
-function setPianoOscillator(selection){
-	setupPiano(selection.value);
-	visParams['piano-vis'].waveform = pianoWaveform;
-	visParams['piano-vis'].fft = pianoFFT;
+	createSteps(pianoStep[0], 'rgb(255, 165, 0)', 8, 'C5', true) 	
 }
 
 function setupSynths(){
 
 	setupKick();
+	setupKickSteps();
+	
 	setupSnare();
-	setupBass();
-	setupPiano('square');
+	setupSnareSteps();
 
+	setupBass();
+	setupBassSteps();
+
+	setupPiano('square');
+	setupPianoSteps();
+	
 	//set the transport 
 	Tone.Transport.bpm.value = 90;
 
