@@ -3,7 +3,6 @@ var visParams
 function defineVisParms(){
 	visParams = {
 		'height':100.,//px //this should be decided based on the container size
-		'left':200.,//dito above
 		'kick-vis':{
 			'waveform':kickWaveform,
 			'fft':kickFFT,
@@ -35,8 +34,11 @@ var s = function(p){
 		var canvas = p.createCanvas();
 		visHolder = p.canvas.parentNode;
 
-		visHolder.style.width = windowWidth - visParams.left;
-		visHolder.style.height = visParams.height;
+		var rect = visHolder.getBoundingClientRect();
+		var parentRect = visHolder.parentElement.getBoundingClientRect();
+		visHolder.style.width = parentRect.width - rect.left -1;//for border 
+
+		visHolder.style.height = visParams.height -2; //for border
 		p.resizeCanvas(parseFloat(visHolder.style.width), parseFloat(visHolder.style.height));
 	 	p.fill(255);
 

@@ -5,15 +5,12 @@ var piano, pianoWaveform, pianoFFT;
 var stepIndex = 0;
 var nSteps = 16
 
-var windowWidth = parseFloat(window.innerWidth);
-var windowHeight = parseFloat(window.innerHeight);
-
 function addStep(elem, color, poly=false){
 	elemPlay = elem.playMe;
 	if (!poly){
 		var selectorID = elem.parentElement.parentElement.id
 		var cls = elem.className.split(" ")[2]
-		var col = document.getElementById("bass-selector").querySelectorAll("."+cls)
+		var col = document.getElementById(selectorID).querySelectorAll("."+cls)
 		for (var i=0; i<col.length; i+=1) {
 			col[i].style.backgroundColor = 'white';
 			col[i].playMe = false;
@@ -25,11 +22,14 @@ function addStep(elem, color, poly=false){
 }
 
 function createSteps(elem, color, row=1, note=null){
-	elem.style.width = windowWidth - 200; //this should be tied back to the container size
+	var rect = elem.getBoundingClientRect();
+	var parentRect = elem.parentElement.getBoundingClientRect();
+	elem.style.width = parentRect.width - rect.left -1;//for border 
+
 	for (var i=0; i< nSteps; i+=1){
 		var step = document.createElement("div")
 		step.className = 'step row'+row+' col'+i;
-		step.style.width = (parseFloat(elem.style.width) - nSteps*4)/nSteps + 'px'; //2 pixel border
+		step.style.width = (parseFloat(elem.style.width))/nSteps + 'px'; //2 pixel border
 
 		if (note) step.note = note;
 		step.playMe = false;
@@ -55,7 +55,7 @@ function setupKick(steps){
 	kick.fan(kickWaveform, kickFFT);
 
 	//create the step bar
-	var kickStep = document.getElementById("kick-selector").querySelectorAll(".stepContainer");
+	var kickStep = document.getElementById("kick-holder").querySelectorAll(".stepContainer");
 	createSteps(kickStep[0], 'rgb(0,0,255)') //should use the visParams for this color
 }
 
@@ -79,7 +79,7 @@ function setupSnare(){
 	snare.fan(snareWaveform, snareFFT);
 
 	//in the step bar
-	var snareSteps = document.getElementById("snare-selector").querySelectorAll(".stepContainer");
+	var snareSteps = document.getElementById("snare-holder").querySelectorAll(".stepContainer");
 	createSteps(snareSteps[0], 'rgb(0,255,0)') //should use the visParams for this color
 	
 }
@@ -112,7 +112,7 @@ function setupBass(){
 	// bassPart.probability = 0.9;
 
 	//create the step bar
-	var bassStep = document.getElementById("bass-selector").querySelectorAll(".stepContainer");
+	var bassStep = document.getElementById("bass-holder").querySelectorAll(".stepContainer");
 	createSteps(bassStep[0], 'rgb(255, 0, 0)', 1, 'C3') //should use the visParams for this color
 	createSteps(bassStep[0], 'rgb(255, 0, 0)', 2, 'E2') 
 	createSteps(bassStep[0], 'rgb(255, 0, 0)', 3, 'D2') 
@@ -190,15 +190,15 @@ function repeat(time) {
 		stepDOMs[i].style.borderColor = "lightgray";
 	}
 
-	kickStep = document.getElementById("kick-selector").querySelectorAll(".step")[stepIndex];
+	kickStep = document.getElementById("kick-holder").querySelectorAll(".step")[stepIndex];
 	kickStep.style.borderColor = 'black';
 	if (kickStep.playMe) kick.triggerAttackRelease("C2", nSteps+'n', time);
 
-	snareStep = document.getElementById("snare-selector").querySelectorAll(".step")[stepIndex];
+	snareStep = document.getElementById("snare-holder").querySelectorAll(".step")[stepIndex];
 	snareStep.style.borderColor = 'black';
 	if (snareStep.playMe) snare.triggerAttackRelease(time);
 
-	bassStep = document.getElementById("bass-selector").querySelectorAll(".col" + stepIndex);
+	bassStep = document.getElementById("bass-holder").querySelectorAll(".col" + stepIndex);
 	for (var i=0; i<bassStep.length; i+=1){
 		bassStep[i].style.borderColor = 'black';
 		if (bassStep[i].playMe) bass.triggerAttackRelease(bassStep[i].note, "16n", time);
@@ -229,20 +229,20 @@ function loadPreset(preset=1){
 	if (preset == 1){
 		beat = nSteps/8;
 
-		var kickSteps = document.getElementById("kick-selector").querySelectorAll(".step");
+		var kickSteps = document.getElementById("kick-holder").querySelectorAll(".step");
 		var steps = [0, 4*beat, nSteps-beat];
 		steps.forEach(function(i){addStep(kickSteps[i],'rgb(0,0,255');})//this color should be set from the vis params
 
-		var snareSteps = document.getElementById("snare-selector").querySelectorAll(".step");
+		var snareSteps = document.getElementById("snare-holder").querySelectorAll(".step");
 		steps = [beat, 3*beat, 5*beat, nSteps-beat];
 		steps.forEach(function(i){addStep(snareSteps[i],'rgb(0,255,0');})//this color should be set from the vis params
 
 		//notes go from low (row5) to high (row1) in rows
-		var bassSteps1 = document.getElementById("bass-selector").querySelectorAll(".step.row1");
-		var bassSteps2 = document.getElementById("bass-selector").querySelectorAll(".step.row2");
-		var bassSteps3 = document.getElementById("bass-selector").querySelectorAll(".step.row3");
-		var bassSteps4 = document.getElementById("bass-selector").querySelectorAll(".step.row4");
-		var bassSteps5 = document.getElementById("bass-selector").querySelectorAll(".step.row5");
+		var bassSteps1 = document.getElementById("bass-holder").querySelectorAll(".step.row1");
+		var bassSteps2 = document.getElementById("bass-holder").querySelectorAll(".step.row2");
+		var bassSteps3 = document.getElementById("bass-holder").querySelectorAll(".step.row3");
+		var bassSteps4 = document.getElementById("bass-holder").querySelectorAll(".step.row4");
+		var bassSteps5 = document.getElementById("bass-holder").querySelectorAll(".step.row5");
 		steps1= [2*beat, 3*beat];
 		steps2= [4*beat];
 		steps3= [Math.floor(3.5*beat), 6*beat];

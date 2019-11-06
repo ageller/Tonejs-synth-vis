@@ -22,36 +22,35 @@
 
 		<!-- I should generate these in the javascript, so that I can position things better -->
 		<div id='kick-holder' class='instContainer' style="top:60px;">
-			<div id='kick-selector' class='instControls'>
-				<div class="stepContainer"></div>
-			</div>
+			<div id='kick-selector' class='instControls'></div>
+			<div class="stepContainer"></div>
 			<div id='kick-vis' class='instVis'></div>
 		</div>
 
 		<div id='snare-holder' class='instContainer' style="top:210px;">
-			<div id='snare-selector' class='instControls'>
-				<div class="stepContainer"></div>
-			</div>
+			<div id='snare-selector' class='instControls'></div>
+			<div class="stepContainer"></div>
 			<div id='snare-vis' class='instVis'></div>
 		</div>
 
 		<div id='bass-holder' class='instContainer' style="top:360px; height:240px">
-			<div id='bass-selector' class='instControls'>
-				<div class="stepContainer"></div>
-			</div>
+			<div id='bass-selector' class='instControls'></div>
+			<div class="stepContainer"></div>
 			<div id='bass-vis' class='instVis' style="top:140px"></div>
 		</div>
 
-		<div id='piano-holder' style="position:absolute; top:660px; left:0px;">
-			<div style="position:absolute; left:10px; top:40px; width:50px">
-				<select id='piano-oscillator-select' onchange=setPianoOscillator(this)>
-					<option value="square">square</option>
-					<option value="sine">sine</option>
-					<option value="triangle">triangle</option>
-					<option value="sawtooth">sawtooth</option>
-				</select>
+		<div id='piano-holder' class='instContainer' style="top:610px; height:240px">
+			<div id='piano-selector' class='instControls'>
+				<div style="position:absolute; left:10px; top:40px; width:50px">
+					<select id='piano-oscillator-select' onchange=setPianoOscillator(this)>
+						<option value="square">square</option>
+						<option value="sine">sine</option>
+						<option value="triangle">triangle</option>
+						<option value="sawtooth">sawtooth</option>
+					</select>
+				</div>
 			</div>
-			<div id='piano-vis' style="position:absolute; left:200px; top:0px"></div>
+			<div id='piano-vis' class='instVis' style="top:140px"></div>
 		</div>
 
 		<script src="synths.js"></script>
