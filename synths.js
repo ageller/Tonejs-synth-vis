@@ -4,21 +4,25 @@ var bass,  bassWaveform,  bassFFT;
 var piano, pianoWaveform, pianoFFT;
 var stepIndex = 0;
 var nSteps = 16
+var	beat = nSteps/8;
+var transport;
 
 function addStep(elem, color, poly=false){
-	elemPlay = elem.playMe;
-	if (!poly){
-		var selectorID = elem.parentElement.parentElement.id
-		var cls = elem.className.split(" ")[2]
-		var col = document.getElementById(selectorID).querySelectorAll("."+cls)
-		for (var i=0; i<col.length; i+=1) {
-			col[i].style.backgroundColor = 'white';
-			col[i].playMe = false;
+	if (elem){
+		elemPlay = elem.playMe;
+		if (!poly){
+			var selectorID = elem.parentElement.parentElement.id
+			var cls = elem.className.split(" ")[2]
+			var col = document.getElementById(selectorID).querySelectorAll("."+cls)
+			for (var i=0; i<col.length; i+=1) {
+				col[i].style.backgroundColor = 'white';
+				col[i].playMe = false;
+			}
 		}
+		elem.style.backgroundColor = 'white'
+		elem.playMe = !elemPlay;
+		if (elem.playMe) elem.style.backgroundColor = color; 
 	}
-	elem.style.backgroundColor = 'white'
-	elem.playMe = !elemPlay;
-	if (elem.playMe) elem.style.backgroundColor = color; 
 }
 
 function createSteps(elem, color, row=1, note=null, poly=false){
@@ -183,7 +187,7 @@ function setupSynths(){
 
 	setupKick();
 	setupKickSteps();
-	
+		
 	setupSnare();
 	setupSnareSteps();
 
@@ -194,7 +198,7 @@ function setupSynths(){
 	setupPianoSteps();
 
 	//set the transport 
-	Tone.Transport.bpm.value = 90;
+	Tone.Transport.bpm.value = nSteps*6.;
 
 	defineVisParms();
 
@@ -241,7 +245,7 @@ function repeat(time) {
 	pianoStep = document.getElementById("piano-holder").querySelectorAll(".col" + stepIndex);
 	for (var i=0; i<pianoStep.length; i+=1){
 		pianoStep[i].style.borderColor = 'black';
-		if (pianoStep[i].playMe) piano.triggerAttackRelease(pianoStep[i].note, nSteps/2+"n", time);
+		if (pianoStep[i].playMe) piano.triggerAttackRelease(pianoStep[i].note, 4*beat+"n", time);
 	}
 
 	stepIndex = (stepIndex + 1) % nSteps;
@@ -261,11 +265,52 @@ function defineGUI(){
 		stepIndex = 0
 
 	});
+
+	document.getElementById('clear').addEventListener('mousedown', clearSteps);
+	document.getElementById('preset1').addEventListener('mousedown', function(){loadPreset(1)});
+	document.getElementById('addSteps').addEventListener('mousedown', function(){modifySteps(1)});
+	document.getElementById('minusSteps').addEventListener('mousedown', function(){modifySteps(-1)});
 }
 
+function modifySteps(add){
+	oldSteps = nSteps
+	nSteps += add;
+	if (nSteps < 8) nSteps = 8;
+	if (nSteps > 64) nSteps = 64;
+	beat = Math.round(nSteps/8);
+	console.log(nSteps, beat)
+
+	document.getElementById('numSteps').innerHTML = nSteps
+
+	if (oldSteps != nSteps){
+		var promise = new Promise(function(resolve, reject){
+			check = removeSteps()
+			if (check) resolve("done")
+		})
+		promise.then(function(){
+			init();
+		});
+	}
+}
+function removeSteps(){
+	var steps = document.getElementsByClassName('stepContainer');
+	for (var i=0; i<steps.length; i+=1){
+		steps[i].innerHTML = ""; 
+		if (i == steps.length-1) return true;
+	}	
+}
+function clearSteps(){
+	var steps = document.getElementsByClassName('step');
+	for (var i=0; i<steps.length; i+=1){
+		steps[i].style.backgroundColor = 'white';
+		steps[i].playMe = false;
+	}	
+}
 function loadPreset(preset=1){
+	//clear all steps first
+	clearSteps();
+
 	if (preset == 1){
-		beat = nSteps/8;
 
 		var kickSteps = document.getElementById("kick-holder").querySelectorAll(".step");
 		var steps = [0, 4*beat, nSteps-beat];
@@ -283,7 +328,7 @@ function loadPreset(preset=1){
 		var bassSteps5 = document.getElementById("bass-holder").querySelectorAll(".step.row5");
 		steps1= [2*beat, 3*beat];
 		steps2= [4*beat];
-		steps3= [Math.floor(3.5*beat), 6*beat];
+		steps3= [Math.round(3.5*beat), 6*beat];
 		steps4= [0];
 		steps5 = [nSteps-beat];
 		steps1.forEach(function(i){addStep(bassSteps1[i],'rgb(255,0,0');})//this color should be set from the vis params
@@ -302,13 +347,13 @@ function loadPreset(preset=1){
 		var pianoSteps7 = document.getElementById("piano-holder").querySelectorAll(".step.row7");
 		var pianoSteps8 = document.getElementById("piano-holder").querySelectorAll(".step.row8");
 		steps1= [beat, 2*beat, 5*beat, 6*beat];
-		steps2= [Math.floor(3.5*beat), 7*beat];
+		steps2= [Math.round(3.5*beat), 7*beat];
 		steps3= [beat, 2*beat, 5*beat, 6*beat, 7*beat];
-		steps4= [Math.floor(3.5*beat)];
+		steps4= [Math.round(3.5*beat)];
 		steps5= [beat, 2*beat, 5*beat, 6*beat];
-		steps6= [Math.floor(3.5*beat), 7*beat];
+		steps6= [Math.round(3.5*beat), 7*beat];
 		steps7= [beat, 2*beat, 5*beat, 6*beat, 7*beat];
-		steps8= [Math.floor(3.5*beat)];
+		steps8= [Math.round(3.5*beat)];
 		steps1.forEach(function(i){addStep(pianoSteps1[i],'rgb(255,165,0)', true);})//this color should be set from the vis params
 		steps2.forEach(function(i){addStep(pianoSteps2[i],'rgb(255,165,0)', true);})//this color should be set from the vis params
 		steps3.forEach(function(i){addStep(pianoSteps3[i],'rgb(255,165,0)', true);})//this color should be set from the vis params
@@ -322,13 +367,15 @@ function loadPreset(preset=1){
 	}
 
 }
-window.onload = function() {
+function init(){
 	setupSynths();
-	defineGUI();
 	loadPreset();
+}
 
-	Tone.Transport.scheduleRepeat(repeat, nSteps+'n'); //for step sequencing
-
+window.onload = function() {
+	init();
+	defineGUI();
+	Tone.Transport.scheduleRepeat(repeat, nSteps+'n'); //for step sequencing	
 }
 
 

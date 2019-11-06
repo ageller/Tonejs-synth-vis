@@ -6,6 +6,7 @@
 
 body {
 	background-color:var(--body-background-color);
+    font-family: sans-serif;
 }
 .instContainer {
 	background-color:var(--background-color);
@@ -61,6 +62,8 @@ body {
 .playControls{
 	position:absolute;
 	height:50px;
+	line-height:50px;
+	font-size:50px;
 	width: 50px;
 	padding: 0px;
 	margin: 0px;
@@ -74,7 +77,13 @@ body {
 	display:block;
 	top:0px;
 }
-.playControls:hover {
+.halfPlayControls{
+	height:25px;
+	line-height:25px;
+	font-size:25px;
+	width:25px;
+}
+.playControlsHover:hover {
 	background-color: var(--foreground-color);
 	color: var(--background-color);
 	cursor: pointer;

@@ -6,14 +6,19 @@
 
 			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 			<link rel="stylesheet" type="text/css" href="index.css" />
-			<link href="https://fonts.googleapis.com/css?family=Josefin+Sans|Lato|Nunito|Material+Icons" rel="stylesheet">
+			<link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
 
 			<script src="lib/Tone.js"></script> <!-- this gives an error, but still appears to work -->
 			<script src="lib/p5.min.js"></script>
 
 	</head>
 
-		<div id="playControl" class="material-icons playControls" style="left:0px; font-size:50px">play_arrow</div>
+		<div id="playControl" class="material-icons playControls playControlsHover" style="left:0px; font-size:50px">play_arrow</div>
+		<div id="numSteps" class="playControls" style="left:50px; width:75px">16</div>
+		<div id="addSteps" class="material-icons playControls halfPlayControls playControlsHover" style="left:125px;">arrow_drop_up</div>
+		<div id="minusSteps" class="material-icons playControls halfPlayControls playControlsHover" style="left:125px; top:25px">arrow_drop_down</div>
+		<div id="clear" class="playControls playControlsHover" style="left:150px; ">0</div>
+		<div id="preset1" class="playControls playControlsHover" style="left:200px; ">1</div>
 		<!-- labels on the buttons-->
 <!-- 		<div>
 			<div class="playInstructions" style="left:0px">play</div>
