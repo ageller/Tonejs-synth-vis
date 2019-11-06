@@ -21,7 +21,7 @@ function addStep(elem, color, poly=false){
 	if (elem.playMe) elem.style.backgroundColor = color; 
 }
 
-function createSteps(elem, color, row=1, note=null){
+function createSteps(elem, color, row=1, note=null, poly=false){
 	var rect = elem.getBoundingClientRect();
 	var parentRect = elem.parentElement.getBoundingClientRect();
 	elem.style.width = parentRect.width - rect.left -1;//for border 
@@ -34,7 +34,7 @@ function createSteps(elem, color, row=1, note=null){
 		if (note) step.note = note;
 		step.playMe = false;
 
-		step.addEventListener('mousedown', function(){addStep(this, color)});
+		step.addEventListener('mousedown', function(){addStep(this, color, poly)});
 		elem.appendChild(step);
 	}
 }
@@ -121,7 +121,7 @@ function setupBass(){
 }
 
 function setupPiano(oscillator){
-	piano = new Tone.PolySynth(4, Tone.Synth, {
+	piano = new Tone.PolySynth(8, Tone.Synth, {
 		"volume" : -8,
 		"oscillator" : {
 			type: oscillator},
@@ -133,17 +133,28 @@ function setupPiano(oscillator){
 	piano.fan(pianoWaveform, pianoFFT);
 
 	//for loop
-	var cChord = ["C4", "E4", "G4", "B4"];
-	var dChord = ["D4", "F4", "A4", "C5"];
-	var gChord = ["B3", "D4", "E4", "A4"];
+	// var cChord = ["C4", "E4", "G4", "B4"];
+	// var dChord = ["D4", "F4", "A4", "C5"];
+	// var gChord = ["B4", "D4", "E4", "A4"];
+	// //C4, D4, E4, F4, G4, A4, B4, C5
 
-	var pianoPart = new Tone.Part(function(time, chord){
-		piano.triggerAttackRelease(chord, nSteps+'n', time);
-	}, [["0:0:2", cChord], ["0:1", cChord], ["0:1:3", dChord], ["0:2:2", cChord], ["0:3", cChord], ["0:3:2", gChord]]).start("2m");
+	// var pianoPart = new Tone.Part(function(time, chord){
+	// 	piano.triggerAttackRelease(chord, nSteps+'n', time);
+	// }, [["0:0:2", cChord], ["0:1", cChord], ["0:1:3", dChord], ["0:2:2", cChord], ["0:3", cChord], ["0:3:2", gChord]]).start("2m");
 
-	pianoPart.loop = true;
-	pianoPart.loopEnd = "1m";
-	pianoPart.humanize = true;
+	// pianoPart.loop = true;
+	// pianoPart.loopEnd = "1m";
+	// pianoPart.humanize = true;
+
+	var pianoStep = document.getElementById("piano-holder").querySelectorAll(".stepContainer");
+	createSteps(pianoStep[0], 'rgb(255, 165, 0)', 1, 'C4', true) //should use the visParams for this color
+	createSteps(pianoStep[0], 'rgb(255, 165, 0)', 2, 'D4', true) 
+	createSteps(pianoStep[0], 'rgb(255, 165, 0)', 3, 'E4', true) 
+	createSteps(pianoStep[0], 'rgb(255, 165, 0)', 4, 'F4', true) 
+	createSteps(pianoStep[0], 'rgb(255, 165, 0)', 5, 'G4', true) 
+	createSteps(pianoStep[0], 'rgb(255, 165, 0)', 6, 'A4', true) 
+	createSteps(pianoStep[0], 'rgb(255, 165, 0)', 7, 'B4', true) 
+	createSteps(pianoStep[0], 'rgb(255, 165, 0)', 8, 'C5', true) 
 
 }
 function setPianoOscillator(selection){
@@ -204,7 +215,11 @@ function repeat(time) {
 		if (bassStep[i].playMe) bass.triggerAttackRelease(bassStep[i].note, "16n", time);
 	}
 
-
+	pianoStep = document.getElementById("piano-holder").querySelectorAll(".col" + stepIndex);
+	for (var i=0; i<pianoStep.length; i+=1){
+		pianoStep[i].style.borderColor = 'black';
+		if (pianoStep[i].playMe) piano.triggerAttackRelease(pianoStep[i].note, "16n", time);
+	}
 
 	stepIndex = (stepIndex + 1) % nSteps;
 
@@ -253,6 +268,33 @@ function loadPreset(preset=1){
 		steps3.forEach(function(i){addStep(bassSteps3[i],'rgb(255,0,0');})//this color should be set from the vis params
 		steps4.forEach(function(i){addStep(bassSteps4[i],'rgb(255,0,0');})//this color should be set from the vis params
 		steps5.forEach(function(i){addStep(bassSteps5[i],'rgb(255,0,0');})//this color should be set from the vis params
+
+
+		var pianoSteps1 = document.getElementById("piano-holder").querySelectorAll(".step.row1");
+		var pianoSteps2 = document.getElementById("piano-holder").querySelectorAll(".step.row2");
+		var pianoSteps3 = document.getElementById("piano-holder").querySelectorAll(".step.row3");
+		var pianoSteps4 = document.getElementById("piano-holder").querySelectorAll(".step.row4");
+		var pianoSteps5 = document.getElementById("piano-holder").querySelectorAll(".step.row5");
+		var pianoSteps6 = document.getElementById("piano-holder").querySelectorAll(".step.row6");
+		var pianoSteps7 = document.getElementById("piano-holder").querySelectorAll(".step.row7");
+		var pianoSteps8 = document.getElementById("piano-holder").querySelectorAll(".step.row8");
+		steps1= [beat, 2*beat, 5*beat, 6*beat];
+		steps2= [Math.floor(3.5*beat), 7*beat];
+		steps3= [beat, 2*beat, 5*beat, 6*beat, 7*beat];
+		steps4= [Math.floor(3.5*beat)];
+		steps5= [beat, 2*beat, 5*beat, 6*beat];
+		steps6= [Math.floor(3.5*beat), 7*beat];
+		steps7= [beat, 2*beat, 5*beat, 6*beat, 7*beat];
+		steps8= [Math.floor(3.5*beat)];
+		steps1.forEach(function(i){addStep(pianoSteps1[i],'rgb(255,165,0)', true);})//this color should be set from the vis params
+		steps2.forEach(function(i){addStep(pianoSteps2[i],'rgb(255,165,0)', true);})//this color should be set from the vis params
+		steps3.forEach(function(i){addStep(pianoSteps3[i],'rgb(255,165,0)', true);})//this color should be set from the vis params
+		steps4.forEach(function(i){addStep(pianoSteps4[i],'rgb(255,165,0)', true);})//this color should be set from the vis params
+		steps5.forEach(function(i){addStep(pianoSteps5[i],'rgb(255,165,0)', true);})//this color should be set from the vis params
+		steps6.forEach(function(i){addStep(pianoSteps6[i],'rgb(255,165,0)', true);})//this color should be set from the vis params
+		steps7.forEach(function(i){addStep(pianoSteps7[i],'rgb(255,165,0)', true);})//this color should be set from the vis params
+		steps8.forEach(function(i){addStep(pianoSteps8[i],'rgb(255,165,0)', true);})//this color should be set from the vis params
+
 
 	}
 
