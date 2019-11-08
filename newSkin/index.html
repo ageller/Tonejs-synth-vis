@@ -1,0 +1,40 @@
+<!-- https://dev.to/shimphillip/building-a-piano-with-tone-js-5c2f -->
+<html>
+	<head>
+		<meta charset="utf-8">
+			<title>Synth Test</title>
+
+			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+			<link rel="stylesheet" type="text/css" href="index.css" />
+			<link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
+
+			<script src="lib/Tone.js"></script> <!-- this gives an error, but still appears to work -->
+			<script src="lib/p5.min.js"></script>
+
+	</head>
+
+		<div id="playControl" class="material-icons playControls playControlsHover" style="left:0px; font-size:50px">play_arrow</div>
+		<div id="numSteps" class="playControls" style="left:50px; width:75px; font-size:50px; line-height:50px">16</div>
+		<div id="addSteps" class="material-icons playControls halfPlayControls playControlsHover" style="left:125px;">arrow_drop_up</div>
+		<div id="minusSteps" class="material-icons playControls halfPlayControls playControlsHover" style="left:125px; top:25px">arrow_drop_down</div>
+		<div id="clear" class="playControls playControlsHover" style="left:150px; font-size:50px; line-height:50px; width:50px">0</div>
+		<div id="preset1" class="playControls playControlsHover" style="left:200px; font-size:50px; line-height:50px; width:50px">1</div>
+		<!-- labels on the buttons-->
+<!-- 		<div>
+			<div class="playInstructions" style="left:0px">play</div>
+		</div> -->
+
+
+		<!-- I should generate these in the javascript, so that I can position things better -->
+		<div id='kickContainer' class='instContainer' style="top:50px; left:0px">
+			<div id='kickControls' class='instControls'></div>
+			<div id='kickControlsExtender' class='material-icons instExtender playControls playControlsHover' style='line-height:50px; font-size:50px'> chevron_right</div>
+			<div id='kickStep' class="stepContainer"></div>
+			<div id='kickVis' class='instVis'></div>
+		</div>
+
+		<script src="synths.js"></script>
+		<script src="vis.js"></script>
+
+	</body>
+</html>
