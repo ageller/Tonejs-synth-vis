@@ -174,12 +174,16 @@ function setupControls(key){
 	var parent = document.getElementById(key+"Container");
 	var parentRect = parent.getBoundingClientRect();
 	var elem = parent.querySelectorAll('#'+key+'Controls')[0];
+	var bw = 4;//border on instControls (can't access it here?)
 
+	///////////////////
+	/////// Volume
+	//////////////////
 	var volumeControl = document.createElement("div")
 	volumeControl.className = 'instController';
 	volumeControl.id = key+'Volume';
-	volumeControl.style.width = parentRect.width/2. + 'px';
-	volumeControl.style.height = parentRect.height/2. + 'px';
+	volumeControl.style.width = parentRect.width/2. - bw + 'px';
+	volumeControl.style.height = parentRect.height/2. - bw + 'px';
 	//top-left , top-right ,  bottom-right ,  bottom-left 
 	volumeControl.style.borderRadius = '100% 0 0 0';
 	volumeControl.style.borderLeft = 'none';
@@ -207,5 +211,52 @@ function setupControls(key){
 
 	new Knob(document.getElementById('volumeKnob'), new Ui.P1());    
 
+	/////////////////
+	///upper-right
+	//////////////////
+	var urControl = document.createElement("div")
+	urControl.className = 'instController';
+	urControl.id = key+'ur';
+	urControl.style.width = parentRect.width/2. - bw + 'px';
+	urControl.style.height = parentRect.height/2. - bw + 'px';
+	//top-left , top-right ,  bottom-right ,  bottom-left 
+	urControl.style.borderRadius = '0 100% 0 0';
+	urControl.style.borderRight = 'none';
+	urControl.style.borderTop = 'none';
+	urControl.style.left = parentRect.width/2. -bw + 'px';
 
+	elem.appendChild(urControl);
+
+	/////////////////
+	///bottom-left
+	//////////////////
+	var blControl = document.createElement("div")
+	blControl.className = 'instController';
+	blControl.id = key+'bl';
+	blControl.style.width = parentRect.width/2. - bw + 'px';
+	blControl.style.height = parentRect.height/2. - bw + 'px';
+	//top-left , top-right ,  bottom-right ,  bottom-left 
+	blControl.style.borderRadius = '0 0 0 100%';
+	blControl.style.borderLeft = 'none';
+	blControl.style.borderBottom = 'none';
+	blControl.style.top = parentRect.height/2. -bw + 'px';
+
+	elem.appendChild(blControl);
+
+	/////////////////
+	///bottom-right
+	//////////////////
+	var brControl = document.createElement("div")
+	brControl.className = 'instController';
+	brControl.id = key+'br';
+	brControl.style.width = parentRect.width/2. - bw + 'px';
+	brControl.style.height = parentRect.height/2. - bw + 'px';
+	//top-left , top-right ,  bottom-right ,  bottom-left 
+	brControl.style.borderRadius = '0 0 100% 0';
+	brControl.style.borderRight = 'none';
+	brControl.style.borderBottom = 'none';
+	brControl.style.left = parentRect.width/2. -bw + 'px';
+	brControl.style.top = parentRect.width/2. -bw + 'px';
+
+	elem.appendChild(brControl);
 }
