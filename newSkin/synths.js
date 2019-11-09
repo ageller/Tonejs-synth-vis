@@ -29,12 +29,13 @@ function addStep(elem, color, poly=false){
 }
 
 function createSteps(elem, color, row=1, note=null, poly=false){
+	var parentRect = elem.parentElement.getBoundingClientRect();
+	var parent2Rect = elem.parentElement.parentElement.getBoundingClientRect();
 	for (var i=0; i< nSteps; i+=1){
 		var step = document.createElement("div")
 		step.className = 'step row'+row+' col'+i;
-		step.style.width = (parseFloat(elem.style.width))/nSteps + 'px'; 
+		step.style.width = (parseFloat(parentRect.width) - parent2Rect.width)/nSteps + 'px'; 
 		step.style.height = stepHeight + 4 + 'px'; //4 extra to match the extender size (annoyingly, I can't seem to fix this)
-
 		if (note) step.note = note;
 		step.playMe = false;
 
@@ -67,7 +68,8 @@ function setupKick(steps){
 function moveExtender(elem){
 	//move the extender
 	var extender = elem.querySelectorAll('.instExtender')[0]
-	var xpos = (100+stepContainerWidth); //how can I get the 100 in the code?
+	extender.classList.add('transformAnimator');
+	var xpos = stepContainerWidth;
 	if (elem.open){
 		xpos = 0;
 	}  
@@ -91,13 +93,19 @@ function moveExtender(elem){
 function showHideSteps(elem){
 	moveExtender(elem);
 	var stepContainer = elem.querySelectorAll(".stepContainer")[0];
+	stepContainer.classList.add('transformAnimator');
 
 	//also toggle the open flag
 	if (elem.open){
-		stepContainer.style.clipPath = 'inset(0px ' + (stepContainerWidth + 100) + 'px 0px 0px)'; 
+		console.log('closing')
+		stepContainer.style.clipPath = 'inset(0px 0px 0px ' + stepContainerWidth + 'px)'; //values are from-top, from-right, from-bottom, from-left
+		stepContainer.style.transform = 'translate(' + (-stepContainerWidth) + 'px,0)';
 		elem.open = !elem.open
 	} else {
+		console.log('opening')
+		stepContainer.classList.remove("hidden");
 		stepContainer.style.clipPath = 'inset(0px 0px 0px 0px)'; 
+		stepContainer.style.transform = 'translate(0,0)';
 
 		elem.open = true
 	}
@@ -106,16 +114,24 @@ function setupKickSteps(){
 	//create the step bar
 	var parent = document.getElementById("kickContainer");
 	var elem = parent.querySelectorAll(".stepContainer")[0];
-	parent.querySelectorAll('#kickControlsExtender')[0].addEventListener('mousedown', function(){showHideSteps(
-		parent)})
+	var extender = parent.querySelectorAll('#kickControlsExtender')[0]
+	extender.addEventListener('mousedown', function(){showHideSteps(parent)})
+	var parentRect = parent.getBoundingClientRect();
 	var rect = elem.getBoundingClientRect();
-	elem.style.width = stepContainerWidth + 50 + 'px';
-	elem.style.clipPath = 'inset(0px ' + (stepContainerWidth + 100) + 'px 0px 0px)'; 
+	elem.style.width = stepContainerWidth + parentRect.width/2. + 'px';
+	elem.style.height = parentRect.height + 'px';
+	elem.style.clipPath = 'inset(0px 0px 0px ' + stepContainerWidth + 'px)'; //values are from-top, from-right, from-bottom, from-left
+	elem.style.transform = 'translate(' + (-stepContainerWidth) + 'px,0)';
 
-	elem.style.marginTop = -stepHeight/2. + 'px';
-	elem.style.paddingLeft = '50px';
+	var h = parentRect.height/2.;
+	elem.style.marginTop = -h + 'px';
+	elem.style.marginLeft = -parentRect.width/2. + 'px';
+	elem.style.borderRadius = '0 ' + h + 'px ' + h +'px 0';
 
-	createSteps(elem, 'rgb(0,0,255)') //should use the visParams for this color
+	var stepHolder = document.createElement("div")
+	stepHolder.style.marginLeft = parentRect.width/2. + 'px';
+	elem.appendChild(stepHolder);
+	createSteps(stepHolder, 'rgb(0,0,255)') //should use the visParams for this color
 }
 
 
@@ -124,8 +140,6 @@ function setupSynths(){
 
 	setupKick();
 	
-		
-
 	//set the transport 
 	Tone.Transport.bpm.value = nSteps*6.;
 
