@@ -72,12 +72,10 @@ function showHideSteps(elem){
 
 	//also toggle the open flag
 	if (elem.open){
-		console.log('closing')
 		extendedContainer.style.clipPath = 'inset(0px 0px -10px ' + extendedContainerWidth + 'px)'; //values are from-top, from-right, from-bottom, from-left
 		extendedContainer.style.transform = 'translate(' + (-extendedContainerWidth) + 'px,0)';
 		elem.open = !elem.open
 	} else {
-		console.log('opening')
 		extendedContainer.classList.remove("hidden");
 		extendedContainer.style.clipPath = 'inset(0px 0px -10px 0px)'; 
 		extendedContainer.style.transform = 'translate(0,0)';

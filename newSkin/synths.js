@@ -1,4 +1,4 @@
-var kick,  kickWaveform,  kickFFT;
+var kick,  kickWaveform,  kickFFT, kickInitialWaveform;
 var snare, snareWaveform, snareFFT;
 var bass,  bassWaveform,  bassFFT;
 var piano, pianoWaveform, pianoFFT;
@@ -65,6 +65,23 @@ function defineKickInst(osc, attack, decay, volume){
 	kickFFT = new Tone.Analyser("fft", 1024);
 	kickWaveform = new Tone.Analyser("waveform", 1024);
 	kick.fan(kickWaveform, kickFFT);
+
+	//can I get the initial waveform by playing it once?
+	Tone.Offline(function(){
+		//only nodes created in this callback will be recorded
+		var oscillator = new Tone.Oscillator("C2", osc).toMaster().start(0)
+		kickInitialWaveform = new Tone.Analyser("waveform", 1024);
+		oscillator.fan(kickInitialWaveform)
+	}, 2).then(function(buffer){
+		defineVisParms();
+		//console.log(kickInitialWaveform.getValue())
+		//do something with the output buffer
+	})
+
+	// kick.triggerAttackRelease("C2", nSteps+'n', 0);
+	// kickInitialWaveform = kickWaveform.getValue();
+	// isAllZero = kickInitialWaveform.every(item => item === 0);
+	// console.log(isAllZero, kickInitialWaveform)
 }
 
 

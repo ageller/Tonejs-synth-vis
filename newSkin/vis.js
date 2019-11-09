@@ -3,22 +3,23 @@ var visParams
 function defineVisParms(){
 	visParams = {
 		'height':100.,//px //this should be decided based on the container size
-		'kickVis':{
+		'kick':{
+			'initialWaveform':kickInitialWaveform,
 			'waveform':kickWaveform,
 			'fft':kickFFT,
 			'color':[0,0,255]
 		},
-		'snareVis':{
+		'snare':{
 			'waveform':snareWaveform,
 			'fft':snareFFT,
 			'color':[0,255,0]
 		},
-		'bassVis':{
+		'bass':{
 			'waveform':bassWaveform,
 			'fft':bassFFT,
 			'color':[255,0,0]
 		},
-		'pianoVis':{
+		'piano':{
 			'waveform':pianoWaveform,
 			'fft':pianoFFT,
 			'color':[255,165,0]
@@ -26,15 +27,19 @@ function defineVisParms(){
 	}
 }
 
-var s = function(p){ 
+var circleVis = function(p){ 
 
 	var visHolder;
 	var r0, x0, y0;
+	var key;
 
 	p.setup = function() {
 		//first a dummy, then resize afterwards
 		var canvas = p.createCanvas();
 		visHolder = p.canvas.parentNode;
+		//I don't love this...
+		var p1 = visHolder.id.indexOf('Vis')
+		key = visHolder.id.substring(0,p1);
 
 		var rect = visHolder.getBoundingClientRect();
 		r0 = Math.sqrt(rect.width*rect.width/4 + rect.height*rect.height/4)/2.;
@@ -50,9 +55,9 @@ var s = function(p){
 	//draw a line that will change to the current waveform
         p.clear();
 		p.noFill();
-	 	var waveform = visParams[visHolder.id].waveform;
-	 	var fft = visParams[visHolder.id].fft;
-	 	var color = visParams[visHolder.id].color;
+	 	var waveform = visParams[key].waveform;
+	 	var fft = visParams[key].fft;
+	 	var color = visParams[key].color;
 
 		p.translate(x0, y0)
 		p.stroke(color);
@@ -89,10 +94,59 @@ var s = function(p){
 	};
 
 };
-var myp5 = new p5(s, 'kickVis');
-//var myp5 = new p5(s, 'snare-vis');
-//var myp5 = new p5(s, 'bass-vis');
-//var myp5 = new p5(s, 'piano-vis');
+new p5(circleVis, 'kickVis');
+//var myp5 = new p5(circleVis, 'snare-vis');
+//var myp5 = new p5(circleVis, 'bass-vis');
+//var myp5 = new p5(circleVis, 'piano-vis');
 
 
+
+///for the initial waveform in the pull out window
+var waveVis = function(p){ 
+
+	var visHolder;
+	var w, h;
+	var key;
+	p.setup = function() {
+		//first a dummy, then resize afterwards
+		var canvas = p.createCanvas();
+		visHolder = p.canvas.parentNode;
+		//I don't love this...
+		var p1 = visHolder.id.indexOf('Wave')
+		key = visHolder.id.substring(0,p1);
+
+		var rect = visHolder.getBoundingClientRect();
+		w = rect.width;
+		h = visParams.height;//rect.height;
+
+		p.resizeCanvas(rect.width, rect.height);
+
+	};
+
+
+	p.draw = function() {
+	//draw a line that will change to the current waveform
+        p.clear();
+		p.noFill();
+	 	var waveform = visParams[key].initialWaveform;
+	 	var color = visParams[key].color;
+
+		p.translate(100, h/2. + 75) //need to fix this
+		p.stroke(color);
+		if (waveform){
+			var values = waveform.getValue();
+			p.beginShape();
+			p.strokeWeight(2);
+			for (var i = 0; i < values.length; i++) {
+				var x = p.map(i, 0, values.length, 0, w);
+				var y = p.map(values[i], -1, 1, h/2., -h/2.);
+				p.vertex(x, y);
+			}
+			p.endShape();
+		}
+
+	};
+
+};
+new p5(waveVis, 'kickWave');
 
