@@ -63,23 +63,43 @@ function setupKick(steps){
 	setupKickSteps();
 
 }
-function showHideSteps(elem){
-	console.log(elem)
-	var extender = elem.querySelectorAll('.instExtender')[0]
 
-	extender.classList.add('transformAnimator');
+function moveExtender(elem){
+	//move the extender
+	var extender = elem.querySelectorAll('.instExtender')[0]
 	var xpos = (100+stepContainerWidth); //how can I get the 100 in the code?
-	extender.innerHTML = 'chevron_left'; //want this change after the transition
-	if (extender.open){
+	if (elem.open){
 		xpos = 0;
-		extender.innerHTML = 'chevron_right';
 	}  
 	extender.style.transform = 'translate(' + xpos + 'px,0)';
 
-	if (extender.open){
-		extender.open = !extender.open
+	//change the icon
+	function changeChevron(event){
+		extender.removeEventListener(transitionEvent, changeChevron);
+		if (elem.open){
+			extender.innerHTML = 'chevron_left';
+		}  else {
+			extender.innerHTML = 'chevron_right'; //want this change after the transition
+		}
+	}
+	var transitionEvent = whichTransitionEvent();
+	extender.addEventListener(transitionEvent, changeChevron);
+
+
+
+}
+function showHideSteps(elem){
+	moveExtender(elem);
+	var stepContainer = elem.querySelectorAll(".stepContainer")[0];
+
+	//also toggle the open flag
+	if (elem.open){
+		stepContainer.style.clipPath = 'inset(0px ' + (stepContainerWidth + 100) + 'px 0px 0px)'; 
+		elem.open = !elem.open
 	} else {
-		extender.open = true
+		stepContainer.style.clipPath = 'inset(0px 0px 0px 0px)'; 
+
+		elem.open = true
 	}
 }
 function setupKickSteps(){
@@ -89,8 +109,9 @@ function setupKickSteps(){
 	parent.querySelectorAll('#kickControlsExtender')[0].addEventListener('mousedown', function(){showHideSteps(
 		parent)})
 	var rect = elem.getBoundingClientRect();
-	console.log(rect)
 	elem.style.width = stepContainerWidth + 50 + 'px';
+	elem.style.clipPath = 'inset(0px ' + (stepContainerWidth + 100) + 'px 0px 0px)'; 
+
 	elem.style.marginTop = -stepHeight/2. + 'px';
 	elem.style.paddingLeft = '50px';
 
