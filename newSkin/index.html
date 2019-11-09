@@ -5,14 +5,17 @@
 			<title>Synth Test</title>
 
 			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-			<link rel="stylesheet" type="text/css" href="index.css" />
 			<link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
+
+			<link rel="stylesheet" type="text/css" href="css/index.css" />
+			<link rel="stylesheet" type="text/css" href="css/p1.css" />
 
 			<script src="lib/Tone.js"></script> <!-- this gives an error, but still appears to work -->
 			<script src="lib/p5.min.js"></script>
+			<script src="lib/knob.js"></script> <!-- https://github.com/eskimoblood/jim-knopf, but a slight edit on my end -->
 
 	</head>
-
+	<body>	
 		<div id="playControl" class="material-icons playControls playControlsHover" style="left:0px; font-size:50px">play_arrow</div>
 		<div id="numSteps" class="playControls" style="left:50px; width:75px; font-size:50px; line-height:50px">16</div>
 		<div id="addSteps" class="material-icons playControls halfPlayControls playControlsHover" style="left:125px;">arrow_drop_up</div>
@@ -27,15 +30,77 @@
 
 		<!-- I should generate these in the javascript, so that I can position things better -->
 		<div id='kickContainer' class='instContainer' style="top:50px; left:0px">
+			<div class='instControls dropShadow7'></div> <!-- to hold the dropshadow, since I want it below everything -->
 			<div id='kickControls' class='instControls'></div>
+			<!-- I want some way to fix the shadow that is on top of this element (and make the extender shadow look better) -->
 			<div id='kickControlsExtender' class='material-icons instExtender playControls playControlsHover' style='line-height:50px; font-size:50px'> chevron_right</div>
-			<div id='kickStep' class="stepContainer hidden"></div>
+			<div id='kickStep' class="extendedContainer hidden"></div>
 			<div id='kickVis' class='instVis'></div>
 		</div>
 
 		<script src="utils.js"></script>
+		<script src="gui.js"></script>
 		<script src="synths.js"></script>
 		<script src="vis.js"></script>
+		<script src="p1.js"></script>
+
+		<!-- for the knobs -->
+		<svg>
+			<filter id="dropshadow" height="150%" width="150%">
+				<feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+				<feOffset dx="0" dy="3" result="offsetblur"/>
+				<feMerge>
+					<feMergeNode/>
+					<feMergeNode in="SourceGraphic"/>
+				</feMerge>
+			</filter>
+			<filter id='inner-shadow'>
+
+				<!-- Shadow Offset -->
+				<feOffset
+						dx='0'
+						dy='5'
+						/>
+
+				<!-- Shadow Blur -->
+				<feGaussianBlur
+						stdDeviation='5'
+						result='offset-blur'
+						/>
+
+				<!-- Invert the drop shadow
+					 to create an inner shadow -->
+				<feComposite
+						operator='out'
+						in='SourceGraphic'
+						in2='offset-blur'
+						result='inverse'
+						/>
+
+				<!-- Color & Opacity -->
+				<feFlood
+						flood-color='black'
+						flood-opacity='0.75'
+						result='color'
+						/>
+
+				<!-- Clip color inside shadow -->
+				<feComposite
+						operator='in'
+						in='color'
+						in2='inverse'
+						result='shadow'
+						/>
+
+				<!-- Put shadow over original object -->
+				<feComposite
+						operator='over'
+						in='shadow'
+						in2='SourceGraphic'
+						/>
+			</filter>
+		</svg>
+
 
 	</body>
 </html>
