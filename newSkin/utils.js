@@ -166,11 +166,32 @@ function initAllSteps(){
 //////////////////////////////////////
 function changeVolume(key, event){
 	var pct = parseFloat(event.target.value)/10.
-	var dB = 10. * Math.log(pct)
-	kick.volume.value = dB;
+	var dB = 10. * Math.log(pct);
+	synthParams[key].volume = dB;
+	window[key].volume.value = dB;
 }
-
+function changeOscillator(key, event){
+	var map = {0:"sine", 1:"square", 2:"triangle", 3:"sawtooth"};
+	synthParams[key].oscillator = map[event.target.value]
+	//this is not general
+	defineKickInst(synthParams[key].oscillator, synthParams[key].attack, synthParams[key].decay, synthParams[key].volume);
+	defineVisParms();
+}
+function changeAttack(key, event){
+	synthParams[key].attack = event.target.value/10.;
+	//this is not general
+	defineKickInst(synthParams[key].oscillator, synthParams[key].attack, synthParams[key].decay, synthParams[key].volume);
+	defineVisParms();
+}
+function changeDecay(key, event){
+	synthParams[key].decay = event.target.value/10.;
+	//this is not general
+	defineKickInst(synthParams[key].oscillator, synthParams[key].attack, synthParams[key].decay, synthParams[key].volume);
+	defineVisParms();
+}
 function setupControls(key){
+	//these knobs only allow integer values (I think).  Would be nice to allow decimals.  
+
 	var parent = document.getElementById(key+"Container");
 	var parentRect = parent.getBoundingClientRect();
 	var elem = parent.querySelectorAll('#'+key+'Controls')[0];
@@ -190,19 +211,20 @@ function setupControls(key){
 	volumeControl.style.borderTop = 'none';
 
 	volumeKnobContainer = document.createElement("div");
-	volumeKnobContainer.style.marginLeft = "20px";
-	volumeKnobContainer.style.marginTop = "20px";
+	volumeKnobContainer.style.marginLeft = "25px";
+	volumeKnobContainer.style.marginTop = "17px";
 
 	volumeKnob = document.createElement("input");
 	volumeKnob.id = "volumeKnob"
 	volumeKnob.type = "range";
 	volumeKnob.min = "0";
 	volumeKnob.max = "10";
-	volumeKnob.dataset.width = "75";
-	volumeKnob.dataset.height = "75";
+	volumeKnob.dataset.width = "65";
+	volumeKnob.dataset.height = "65";
 	volumeKnob.dataset.angleoffset = "220";
 	volumeKnob.dataset.anglerange = "280";
-	volumeKnob.value=10;
+	pct = Math.pow(10,synthParams[key].volume/10.);
+	volumeKnob.value = 10.*pct;
 	volumeKnobContainer.appendChild(volumeKnob);
 	volumeKnob.addEventListener('change', function (e){changeVolume(key,e)});
 
@@ -211,52 +233,154 @@ function setupControls(key){
 
 	new Knob(document.getElementById('volumeKnob'), new Ui.P1());    
 
+	var text = document.createElement('div');
+	text.className = "playInstructions";
+	text.style.width = volumeControl.style.width;
+	text.style.marginTop = '25px';
+	text.style.paddingLeft = '7px';
+	text.style.textAlign = 'left';
+	text.innerHTML = 'Volume';
+
+	elem.appendChild(text);
+
 	/////////////////
 	///upper-right
 	//////////////////
-	var urControl = document.createElement("div")
-	urControl.className = 'instController';
-	urControl.id = key+'ur';
-	urControl.style.width = parentRect.width/2. - bw + 'px';
-	urControl.style.height = parentRect.height/2. - bw + 'px';
+	//would be nice to force this to snap to values
+	var oscillatorControl = document.createElement("div")
+	oscillatorControl.className = 'instController';
+	oscillatorControl.id = key+'oscillator';
+	oscillatorControl.style.width = parentRect.width/2. - bw + 'px';
+	oscillatorControl.style.height = parentRect.height/2. - bw + 'px';
 	//top-left , top-right ,  bottom-right ,  bottom-left 
-	urControl.style.borderRadius = '0 100% 0 0';
-	urControl.style.borderRight = 'none';
-	urControl.style.borderTop = 'none';
-	urControl.style.left = parentRect.width/2. -bw + 'px';
+	oscillatorControl.style.borderRadius = '0 100% 0 0';
+	oscillatorControl.style.borderRight = 'none';
+	oscillatorControl.style.borderTop = 'none';
+	oscillatorControl.style.left = parentRect.width/2. -bw + 'px';
 
-	elem.appendChild(urControl);
+	oscillatorKnobContainer = document.createElement("div");
+	oscillatorKnobContainer.style.marginLeft = "5px";
+	oscillatorKnobContainer.style.marginTop = "17px";
+
+	oscillatorKnob = document.createElement("input");
+	oscillatorKnob.id = "oscillatorKnob"
+	oscillatorKnob.type = "range";
+	oscillatorKnob.min = "0";
+	oscillatorKnob.max = "3";
+	oscillatorKnob.dataset.width = "65";
+	oscillatorKnob.dataset.height = "65";
+	oscillatorKnob.dataset.angleoffset = "300";
+	oscillatorKnob.dataset.anglerange = "120";
+	oscillatorKnob.dataset.labels = "sin,sqr,tri,saw";
+	oscillatorKnob.value = 0.;
+	oscillatorKnobContainer.appendChild(oscillatorKnob);
+	oscillatorKnob.addEventListener('change', function (e){changeOscillator(key,e)});
+
+	oscillatorControl.appendChild(oscillatorKnobContainer);
+	elem.appendChild(oscillatorControl);
+
+	new Knob(document.getElementById('oscillatorKnob'), new Ui.P1());    
+
+	var text = document.createElement('div');
+	text.className = "playInstructions";
+	text.style.width = oscillatorControl.style.width;
+	text.style.marginTop = '25px';
+	text.style.paddingLeft = '90px';
+	text.style.textAlign = 'right';
+	text.innerHTML = 'Oscillator';
+
+	elem.appendChild(text);
 
 	/////////////////
 	///bottom-left
 	//////////////////
-	var blControl = document.createElement("div")
-	blControl.className = 'instController';
-	blControl.id = key+'bl';
-	blControl.style.width = parentRect.width/2. - bw + 'px';
-	blControl.style.height = parentRect.height/2. - bw + 'px';
+	var attackControl = document.createElement("div")
+	attackControl.className = 'instController';
+	attackControl.id = key+'attack';
+	attackControl.style.width = parentRect.width/2. - bw + 'px';
+	attackControl.style.height = parentRect.height/2. - bw + 'px';
 	//top-left , top-right ,  bottom-right ,  bottom-left 
-	blControl.style.borderRadius = '0 0 0 100%';
-	blControl.style.borderLeft = 'none';
-	blControl.style.borderBottom = 'none';
-	blControl.style.top = parentRect.height/2. -bw + 'px';
+	attackControl.style.borderRadius = '0 0 0 100%';
+	attackControl.style.borderLeft = 'none';
+	attackControl.style.borderBottom = 'none';
+	attackControl.style.top = parentRect.height/2. -bw + 'px';
 
-	elem.appendChild(blControl);
+	attackKnobContainer = document.createElement("div");
+	attackKnobContainer.style.marginLeft = "25px";
+	attackKnobContainer.style.marginTop = "10px";
+
+	attackKnob = document.createElement("input");
+	attackKnob.id = "attackKnob"
+	attackKnob.type = "range";
+	attackKnob.min = "0.0";
+	attackKnob.max = "10";
+	attackKnob.dataset.width = "65";
+	attackKnob.dataset.height = "65";
+	attackKnob.dataset.angleoffset = "220";
+	attackKnob.dataset.anglerange = "280";
+	attackKnob.value = synthParams[key].attack*10.; //need to set this from some parameters list
+	attackKnobContainer.appendChild(attackKnob);
+	attackKnob.addEventListener('change', function (e){changeAttack(key,e)});
+
+	attackControl.appendChild(attackKnobContainer);
+	elem.appendChild(attackControl);
+
+	new Knob(document.getElementById('attackKnob'), new Ui.P1());    
+
+	var text = document.createElement('div');
+	text.className = "playInstructions";
+	text.style.width = attackControl.style.width;
+	text.style.marginTop = '45px';
+	text.style.paddingLeft = '7px';
+	text.style.textAlign = 'left';
+	text.innerHTML = 'Attack';
+
+	elem.appendChild(text);
+
 
 	/////////////////
 	///bottom-right
 	//////////////////
-	var brControl = document.createElement("div")
-	brControl.className = 'instController';
-	brControl.id = key+'br';
-	brControl.style.width = parentRect.width/2. - bw + 'px';
-	brControl.style.height = parentRect.height/2. - bw + 'px';
+	var decayControl = document.createElement("div")
+	decayControl.className = 'instController';
+	decayControl.id = key+'decay';
+	decayControl.style.width = parentRect.width/2. - bw + 'px';
+	decayControl.style.height = parentRect.height/2. - bw + 'px';
 	//top-left , top-right ,  bottom-right ,  bottom-left 
-	brControl.style.borderRadius = '0 0 100% 0';
-	brControl.style.borderRight = 'none';
-	brControl.style.borderBottom = 'none';
-	brControl.style.left = parentRect.width/2. -bw + 'px';
-	brControl.style.top = parentRect.width/2. -bw + 'px';
+	decayControl.style.borderRadius = '0 0 100% 0';
+	decayControl.style.borderRight = 'none';
+	decayControl.style.borderBottom = 'none';
+	decayControl.style.left = parentRect.width/2. -bw + 'px';
+	decayControl.style.top = parentRect.width/2. -bw + 'px';
 
-	elem.appendChild(brControl);
-}
+	decayKnobContainer = document.createElement("div");
+	decayKnobContainer.style.marginLeft = "5px";
+	decayKnobContainer.style.marginTop = "10px";
+
+	decayKnob = document.createElement("input");
+	decayKnob.id = "decayKnob"
+	decayKnob.type = "range";
+	decayKnob.min = "0.0";
+	decayKnob.max = "10";
+	decayKnob.dataset.width = "65";
+	decayKnob.dataset.height = "65";
+	decayKnob.dataset.angleoffset = "220";
+	decayKnob.dataset.anglerange = "280";
+	decayKnob.value = synthParams[key].decay*10.; //need to set this from some parameters list
+	decayKnobContainer.appendChild(decayKnob);
+	decayKnob.addEventListener('change', function (e){changeDecay(key,e)});
+
+	decayControl.appendChild(decayKnobContainer);
+	elem.appendChild(decayControl);
+
+	new Knob(document.getElementById('decayKnob'), new Ui.P1());    
+
+	var text = document.createElement('div');
+	text.className = "playInstructions";
+	text.style.width = decayControl.style.width;
+	text.style.marginTop = '45px';
+	text.style.paddingLeft = '90px';
+	text.style.textAlign = 'right';
+	text.innerHTML = 'Decay';
+
+	elem.appendChild(text);}

@@ -23,9 +23,9 @@
 }
 
 .p1 text.active {
-	font-size: 12px;
+	/*font-size: 12px;*/
 	fill:red;
-	-webkit-transition: all .3s ease-in-out;
+	-webkit-transition: all .1s ease-in-out;
 }
 div:focus {
 	outline:none;

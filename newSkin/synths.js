@@ -10,19 +10,42 @@ var transport;
 var extendedContainerWidth = 500; //pixels
 var stepHeight = 50; //pixels 
 
-
+var synthParams = {'kick':{
+					'volume':-5,
+					'attack':0.7,
+					'decay':0.4,
+					'oscillator':'sine'
+				}
+			};
 
 
 //taken from the events example
 function setupKick(osc, attack, decay, volume){
+
+	defineKickInst(osc, attack, decay, volume)
+
+
+	//connect the controls
+	setupControls('kick');
+
+	//format the steps container and add the steps
+	//key, color, Nrows, notes, poly
+	setupSteps('kick', 'rgb(0,0,255)', 1, null, false);
+}
+
+
+
+function defineKickInst(osc, attack, decay, volume){
+	//onsole.log(attack, decay, volume, osc)
+	//Note: Volume is in dB
 	kick = new Tone.MembraneSynth({
 		"pitchDecay" : 0.05 ,
-		"octaves" : 20 ,
+		"octaves" : 10 ,
 		"oscillator" : {
 			"type" : osc
 		} ,
 		"envelope" : {
-			"attack" : attack ,
+			"attack" : attack,
 			"decay" : decay,
 			"sustain" : 0.01 ,
 			"release" : 1.4 ,
@@ -37,27 +60,17 @@ function setupKick(osc, attack, decay, volume){
 		// },
 		// "octaves" : 10
 	}).toMaster();
+
 	//for visualizing
 	kickFFT = new Tone.Analyser("fft", 1024);
 	kickWaveform = new Tone.Analyser("waveform", 1024);
 	kick.fan(kickWaveform, kickFFT);
-
-	//connect the controls
-	setupControls('kick');
-
-	//format the steps container and add the steps
-	//key, color, Nrows, notes, poly
-	setupSteps('kick', 'rgb(0,0,255)', 1, null, false);
 }
-
-
-
-
 
 
 function setupSynths(){
 
-	setupKick("sine", 1, 0.4, 0);
+	setupKick(synthParams.kick.oscillator, synthParams.kick.attack, synthParams.kick.decay, synthParams.kick.volume);
 
 }
 

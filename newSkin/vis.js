@@ -62,7 +62,7 @@ var s = function(p){
 			p.strokeWeight(2);
 			for (var i = 0; i < values.length; i++) {
 				var theta = p.map(i, 0, values.length, 0, 2.*Math.PI);
-				var r = p.map(values[i], -1, 1, 0.15*r0, -0.15*r0);
+				var r = p.map(values[i], -1, 1, 0.3*r0, -0.3*r0);
 				var x = (r + 1.1*r0)*Math.cos(theta);
 				var y = (r + 1.1*r0)*Math.sin(theta);
 				//console.log(theta, r, r0, x, y)
