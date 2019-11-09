@@ -1,7 +1,6 @@
 // Function from David Walsh: http://davidwalsh.name/css-animation-callback
 function whichTransitionEvent(){
-	var t,
-			el = document.createElement("fakeelement");
+	var t,el = document.createElement("fakeelement");
 
 	var transitions = {
 		"transition"      : "transitionend",
@@ -18,8 +17,7 @@ function whichTransitionEvent(){
 }
 
 function whichAnimationEvent(){
-	var t,
-			el = document.createElement("fakeelement");
+	var t,el = document.createElement("fakeelement");
 
 	var animations = {
 		"animation"      : "animationend",
@@ -170,22 +168,31 @@ function changeVolume(key, event){
 }
 function changeOscillator(key, event){
 	var map = {0:"sine", 1:"square", 2:"triangle", 3:"sawtooth"};
+	var osc = synthParams[key].oscillator; 
 	synthParams[key].oscillator = map[event.target.value]
 	//this is not general
-	defineKickInst(synthParams[key].oscillator, synthParams[key].attack, synthParams[key].decay, synthParams[key].volume);
-	defineVisParms();
+	if (synthParams[key].oscillator != osc){
+		defineKickInst(synthParams[key].oscillator, synthParams[key].attack, synthParams[key].decay, synthParams[key].volume);
+		defineVisParms();
+	}
 }
 function changeAttack(key, event){
+	var att = synthParams[key].attack;
 	synthParams[key].attack = event.target.value/10.;
 	//this is not general
-	defineKickInst(synthParams[key].oscillator, synthParams[key].attack, synthParams[key].decay, synthParams[key].volume);
-	defineVisParms();
+	if (synthParams[key].attack != att){
+		defineKickInst(synthParams[key].oscillator, synthParams[key].attack, synthParams[key].decay, synthParams[key].volume);
+		defineVisParms();
+	}
 }
 function changeDecay(key, event){
+	var dec = synthParams[key].decay;
 	synthParams[key].decay = event.target.value/10.;
 	//this is not general
-	defineKickInst(synthParams[key].oscillator, synthParams[key].attack, synthParams[key].decay, synthParams[key].volume);
-	defineVisParms();
+	if (synthParams[key].decay != dec){
+		defineKickInst(synthParams[key].oscillator, synthParams[key].attack, synthParams[key].decay, synthParams[key].volume);
+		defineVisParms();
+	}
 }
 function setupControls(key){
 	//these knobs only allow integer values (I think).  Would be nice to allow decimals.  
