@@ -5,62 +5,93 @@
 			<title>Synth Test</title>
 
 			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-			<link rel="stylesheet" type="text/css" href="index.css" />
 			<link href="https://fonts.googleapis.com/css?family=Material+Icons" rel="stylesheet">
 
-			<script src="lib/Tone.js"></script> <!-- this gives an error, but still appears to work -->
-			<script src="lib/p5.min.js"></script>
+			<link rel="stylesheet" type="text/css" href="src/css/index.css" />
+			<link rel="stylesheet" type="text/css" href="src/css/p1.css" />
+
+			<script src="src/lib/Tone.js"></script> <!-- this gives an error, but still appears to work -->
+			<script src="src/lib/p5.min.js"></script>
+			<script src="src/lib/knob.js"></script> <!-- https://github.com/eskimoblood/jim-knopf, but a slight edit on my end -->
 
 	</head>
-
+	<body>	
 		<div id="playControl" class="material-icons playControls playControlsHover" style="left:0px; font-size:50px">play_arrow</div>
-		<div id="numSteps" class="playControls" style="left:50px; width:75px">16</div>
+		<div id="numSteps" class="playControls" style="left:50px; width:75px; font-size:50px; line-height:50px">16</div>
 		<div id="addSteps" class="material-icons playControls halfPlayControls playControlsHover" style="left:125px;">arrow_drop_up</div>
 		<div id="minusSteps" class="material-icons playControls halfPlayControls playControlsHover" style="left:125px; top:25px">arrow_drop_down</div>
-		<div id="clear" class="playControls playControlsHover" style="left:150px; ">0</div>
-		<div id="preset1" class="playControls playControlsHover" style="left:200px; ">1</div>
+		<div id="clear" class="playControls playControlsHover" style="left:150px; font-size:50px; line-height:50px; width:50px">0</div>
+		<div id="preset1" class="playControls playControlsHover" style="left:200px; font-size:50px; line-height:50px; width:50px">1</div>
 		<!-- labels on the buttons-->
 <!-- 		<div>
 			<div class="playInstructions" style="left:0px">play</div>
 		</div> -->
 
 
-		<!-- I should generate these in the javascript, so that I can position things better -->
-		<div id='kick-holder' class='instContainer' style="top:60px;">
-			<div id='kick-selector' class='instControls'></div>
-			<div class="stepContainer"></div>
-			<div id='kick-vis' class='instVis'></div>
-		</div>
+		<script src="src/js/utils.js"></script>
+		<script src="src/js/gui.js"></script>
+		<script src="src/js/synths.js"></script>
+		<script src="src/js/presets.js"></script>
+		<script src="src/js/vis.js"></script>
+		<script src="src/js/p1.js"></script>
 
-		<div id='snare-holder' class='instContainer' style="top:210px;">
-			<div id='snare-selector' class='instControls'></div>
-			<div class="stepContainer"></div>
-			<div id='snare-vis' class='instVis'></div>
-		</div>
+		<!-- for the knobs -->
+		<svg>
+			<filter id="dropshadow" height="150%" width="150%">
+				<feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+				<feOffset dx="0" dy="3" result="offsetblur"/>
+				<feMerge>
+					<feMergeNode/>
+					<feMergeNode in="SourceGraphic"/>
+				</feMerge>
+			</filter>
+			<filter id='inner-shadow'>
 
-		<div id='bass-holder' class='instContainer' style="top:360px; height:240px">
-			<div id='bass-selector' class='instControls'></div>
-			<div class="stepContainer"></div>
-			<div id='bass-vis' class='instVis' style="top:140px"></div>
-		</div>
+				<!-- Shadow Offset -->
+				<feOffset
+						dx='0'
+						dy='5'
+						/>
 
-		<div id='piano-holder' class='instContainer' style="top:610px; height:300px">
-			<div id='piano-selector' class='instControls'>
-				<div style="position:absolute; left:10px; top:40px; width:50px">
-					<select id='piano-oscillator-select' onchange=setPianoOscillator(this)>
-						<option value="square">square</option>
-						<option value="sine">sine</option>
-						<option value="triangle">triangle</option>
-						<option value="sawtooth">sawtooth</option>
-					</select>
-				</div>
-			</div>
-			<div class="stepContainer"></div>
-			<div id='piano-vis' class='instVis' style="top:200px"></div>
-		</div>
+				<!-- Shadow Blur -->
+				<feGaussianBlur
+						stdDeviation='5'
+						result='offset-blur'
+						/>
 
-		<script src="synths.js"></script>
-		<script src="vis.js"></script>
+				<!-- Invert the drop shadow
+					 to create an inner shadow -->
+				<feComposite
+						operator='out'
+						in='SourceGraphic'
+						in2='offset-blur'
+						result='inverse'
+						/>
+
+				<!-- Color & Opacity -->
+				<feFlood
+						flood-color='black'
+						flood-opacity='0.75'
+						result='color'
+						/>
+
+				<!-- Clip color inside shadow -->
+				<feComposite
+						operator='in'
+						in='color'
+						in2='inverse'
+						result='shadow'
+						/>
+
+				<!-- Put shadow over original object -->
+				<feComposite
+						operator='over'
+						in='shadow'
+						in2='SourceGraphic'
+						/>
+			</filter>
+		</svg>
+
 
 	</body>
 </html>
