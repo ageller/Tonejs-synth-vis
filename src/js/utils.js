@@ -463,3 +463,66 @@ function setupControls(key, controlsList){
 		volumeControl.appendChild(mute)
 	}
 }
+
+
+function setupDOM(key, left, top){
+	var body = document.getElementsByTagName("BODY")[0];
+	
+	var container = document.createElement("div");
+	container.id = key+'Container';
+	container.className = 'instContainer';
+	container.style.top = top + 'px';
+	container.style.left = left + 'px';
+
+	//to hold the dropshadow, since I want it below everything
+	var shadow = document.createElement("div");
+	shadow.className = 'instControls dropShadow7';
+	container.appendChild(shadow);
+
+	var controls = document.createElement("div");
+	controls.id = key+'Controls';
+	controls.className = 'instControls';
+	container.appendChild(controls);
+
+	//I want some way to fix the shadow that is on top of this element (and make the extender shadow look better)
+	var extender = document.createElement("div");
+	extender.id = key+'ControlsExtender';
+	extender.className ='material-icons instExtender playControls playControlsHover transformAnimator';
+	extender.style.lineHeight = '50px';
+	extender.style.fontSize = '50px';
+	extender.innerHTML = 'chevron_right';
+	extender.addEventListener('mousedown', function(){showHideExtendedControls(container)})
+	container.appendChild(extender);
+
+	var extend = document.createElement("div");
+	extend.id = key+'Extend';
+	extend.className = 'extendedContainer transformAnimator';
+	extend.style.clipPath = 'inset(0px 0px -10px ' + extendedContainerWidth + 'px)'; //values are from-top, from-right, from-bottom, from-left
+	extend.style.transform = 'translate(' + (-extendedContainerWidth) + 'px,0)';
+
+	var visW = document.createElement("div");
+	visW.id = key+"Wave";
+	visW.className = 'instVis';
+	extend.appendChild(visW);
+	container.appendChild(extend);
+
+	var vis = document.createElement("div");
+	vis.id = key+"Vis";
+	vis.className = 'instVis';
+	container.appendChild(vis);
+
+	body.appendChild(container);
+
+	//now format a bit more
+	var parentRect = container.getBoundingClientRect();
+	extend.style.width = extendedContainerWidth + parentRect.width/2. + 'px';
+	extend.style.height = parentRect.height + 'px';
+
+	var h = parentRect.height/2.;
+	extend.style.marginTop = -h + 'px';
+	extend.style.marginLeft = -parentRect.width/2. + 'px';
+	extend.style.borderRadius = '0 ' + h + 'px ' + h +'px 0';
+	
+	showHideExtendedControls(container)
+
+}

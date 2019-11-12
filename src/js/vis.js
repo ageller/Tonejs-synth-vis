@@ -37,11 +37,24 @@ var circleVis = function(p){
 		//I don't love this...
 		var p1 = visHolder.id.indexOf('Vis')
 		key = visHolder.id.substring(0,p1);
+		parent = document.getElementById(key+'Container');
+		parentRect = parent.getBoundingClientRect();
+
+
+		//I could probably turn this sizing into a formula with one input, but for now this works
+		var w = parentRect.width + 100;
+		var h = parentRect.height + 100;
+
+		//make this big so that there is no clipping, and try to center it
+		visHolder.style.height = 1000 + 'px';
+		visHolder.style.width = 1000 + 'px';
+		visHolder.style.marginLeft = -400 + 'px';
+		visHolder.style.marginTop = -400 + 'px';
 
 		var rect = visHolder.getBoundingClientRect();
-		r0 = Math.sqrt(rect.width*rect.width/4 + rect.height*rect.height/4)/2.;
-		x0 = rect.width/2.;
-		y0 = rect.height/2.;
+		r0 = Math.sqrt(w*w/4 + h*h/4)/2.;
+		x0 = w/2 + 400;;
+		y0 = h/2 + 400;
 
 		p.resizeCanvas(rect.width, rect.height);
 
@@ -63,10 +76,10 @@ var circleVis = function(p){
 		if (waveform){
 			var values = waveform.getValue();
 			p.beginShape();
-			p.strokeWeight(2);
+			p.strokeWeight(8);
 			for (var i = 0; i < values.length; i++) {
 				var theta = p.map(i, 0, values.length, 0, 2.*Math.PI);
-				var r = p.map(values[i], -1, 1, 0.3*r0, -0.3*r0);
+				var r = p.map(values[i], -1, 1, r0, -1*r0);
 				var x = (r + 1.1*r0)*Math.cos(theta);
 				var y = (r + 1.1*r0)*Math.sin(theta);
 				//console.log(theta, r, r0, x, y)
