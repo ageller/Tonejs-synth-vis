@@ -344,10 +344,10 @@ function setupInst(key, x, y, controlsList, poly){
 }
 
 function init(){
-	setupInst('kick', 0, 50, ['volume', 'oscillator', 'attack', 'decay'], false);
-	setupInst('snare', 0, 300, ['volume', 'attack', 'decay'], false);
-	setupInst('bass', 800, 50, ['volume', 'oscillator', 'attack', 'decay'], false);
-	setupInst('piano', 800, 300, ['volume', 'oscillator', 'attack', 'decay'], true);
+	setupInst('kick', 0, 50, ['volume', 'oscillator', 'attack', 'decay', 'mute'], false);
+	setupInst('snare', 0, 300, ['volume', 'attack', 'decay', 'mute'], false);
+	setupInst('bass', 800, 50, ['volume', 'oscillator', 'attack', 'decay', 'mute'], false);
+	setupInst('piano', 800, 300, ['volume', 'oscillator', 'attack', 'decay', 'mute'], true);
 
 	loadPreset();
 

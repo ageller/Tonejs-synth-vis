@@ -161,10 +161,7 @@ function initAllSteps(){
 //////////////////////////////////////
 //for the controls
 //////////////////////////////////////
-function changeVolume(key, event){
-	var pct = parseFloat(event.target.value)/10.
-	var dB = 10. * Math.log(pct);
-	synthParams[key].volume = dB;
+function setVolume(key, dB){
 	if (synthParams[key].instrument.hasOwnProperty('voices')){
 		synthParams[key].instrument.voices.forEach(function(v){
 			v.volume.value = dB;
@@ -172,6 +169,12 @@ function changeVolume(key, event){
 	} else 	{
 		synthParams[key].instrument.volume.value = dB;
 	}
+}
+function changeVolume(key, event){
+	var pct = parseFloat(event.target.value)/10.
+	var dB = 10. * Math.log(pct);
+	synthParams[key].volume = dB;
+	setVolume(key, dB);
 }
 function changeOscillator(key, event){
 	var osc = synthParams[key].oscillator; 
@@ -199,6 +202,18 @@ function changeDecay(key, event){
 		defineInst(key);
 		defineVisParms();
 	}
+}
+function muteVolume(elem, key){
+	var muted = (elem.dataset.muted == 'true');
+	if (muted){
+		elem.innerHTML = 'volume_up';
+		setVolume(key, synthParams[key].volume);
+	} else {
+		elem.innerHTML = 'volume_off';
+		setVolume(key, Number.NEGATIVE_INFINITY);
+
+	}
+	elem.dataset.muted = !muted;
 }
 function setupControls(key, controlsList){
 	//these knobs only allow integer values (I think).  Would be nice to allow decimals.  
@@ -427,4 +442,24 @@ function setupControls(key, controlsList){
 
 	var txt = elem.querySelectorAll('text');
 	for (var i=0; i<txt.length; i+=1) txt[i].style.fill = color;
+
+	/////////////////
+	///mute
+	//////////////////
+	if (controlsList.indexOf('mute') != -1){
+
+		var mute = document.createElement('div');
+		mute.className = 'material-icons playInstructions';
+		mute.innerHTML = 'volume_up';
+		mute.style.marginTop = '22px';
+		mute.style.paddingLeft = '50px';
+		mute.style.textAlign = 'left';
+		mute.style.fontSize = '18px';
+		mute.style.lineHeight = '18px';
+		mute.style.zIndex = '11';
+		mute.style.cursor = 'pointer';
+		mute.dataset.muted = false;
+		mute.addEventListener('mousedown',function(){muteVolume(this, key)})
+		volumeControl.appendChild(mute)
+	}
 }
