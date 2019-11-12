@@ -51,21 +51,6 @@ function clearSteps(){
 	var steps = document.getElementsByClassName('step');
 	for (var i=0; i<steps.length; i+=1){
 		steps[i].style.backgroundColor = 'white';
-		steps[i].playMe = false;
+		steps[i].dataset.playMe = false;
 	}	
-}
-function loadPreset(preset=1){
-	//clear all steps first
-	clearSteps();
-
-	if (preset == 1){
-
-		var kickSteps = document.getElementById("kickContainer").querySelectorAll(".step");
-		var steps = [0, 4*beat, nSteps-beat];
-		steps.forEach(function(i){addStep(kickSteps[i],'rgb(0,0,255');})//this color should be set from the vis params
-
-
-
-	}
-
 }

@@ -1,28 +1,25 @@
-var visParams
-
 function defineVisParms(){
 	visParams = {
-		'height':100.,//px //this should be decided based on the container size
+		'height':75.,//px //this should be decided based on the container size
 		'kick':{
 			'initialWaveform':kickInitialWaveform,
 			'waveform':kickWaveform,
 			'fft':kickFFT,
-			'color':[0,0,255]
 		},
 		'snare':{
+			'initialWaveform':snareInitialWaveform,
 			'waveform':snareWaveform,
 			'fft':snareFFT,
-			'color':[0,255,0]
 		},
 		'bass':{
+			'initialWaveform':bassInitialWaveform,
 			'waveform':bassWaveform,
 			'fft':bassFFT,
-			'color':[255,0,0]
 		},
 		'piano':{
+			'initialWaveform':pianoInitialWaveform,
 			'waveform':pianoWaveform,
 			'fft':pianoFFT,
-			'color':[255,165,0]
 		}
 	}
 }
@@ -48,6 +45,8 @@ var circleVis = function(p){
 
 		p.resizeCanvas(rect.width, rect.height);
 
+		haveCircleVis[key] = true;
+
 	};
 
 
@@ -57,7 +56,7 @@ var circleVis = function(p){
 		p.noFill();
 	 	var waveform = visParams[key].waveform;
 	 	var fft = visParams[key].fft;
-	 	var color = visParams[key].color;
+	 	var color = synthParams[key].color;
 
 		p.translate(x0, y0)
 		p.stroke(color);
@@ -94,10 +93,7 @@ var circleVis = function(p){
 	};
 
 };
-new p5(circleVis, 'kickVis');
-//var myp5 = new p5(circleVis, 'snare-vis');
-//var myp5 = new p5(circleVis, 'bass-vis');
-//var myp5 = new p5(circleVis, 'piano-vis');
+
 
 
 
@@ -115,11 +111,14 @@ var waveVis = function(p){
 		var p1 = visHolder.id.indexOf('Wave')
 		key = visHolder.id.substring(0,p1);
 
-		var rect = visHolder.getBoundingClientRect();
-		w = rect.width;
+		var rect = visHolder.parentNode.getBoundingClientRect();
+		w = rect.width - 75;
 		h = visParams.height;//rect.height;
 
-		p.resizeCanvas(rect.width, rect.height);
+		p.resizeCanvas(w, h);
+		visHolder.style.marginTop = (stepHeight + 10) + 'px';
+
+		haveWaveVis[key] = true;
 
 	};
 
@@ -129,9 +128,9 @@ var waveVis = function(p){
         p.clear();
 		p.noFill();
 	 	var waveform = visParams[key].initialWaveform;
-	 	var color = visParams[key].color;
+	 	var color = synthParams[key].color;
 
-		p.translate(100, h/2. + 75) //need to fix this
+		p.translate(100, h/2.) //need to fix this
 		p.stroke(color);
 		if (waveform){
 			var values = waveform.getValue();
@@ -139,7 +138,7 @@ var waveVis = function(p){
 			p.strokeWeight(2);
 			for (var i = 0; i < values.length; i++) {
 				var x = p.map(i, 0, values.length, 0, w);
-				var y = p.map(values[i], -1, 1, h/2., -h/2.);
+				var y = p.map(values[i], -1, 1, 0.95*h/2., -0.95*h/2.);
 				p.vertex(x, y);
 			}
 			p.endShape();
@@ -148,5 +147,4 @@ var waveVis = function(p){
 	};
 
 };
-new p5(waveVis, 'kickWave');
 

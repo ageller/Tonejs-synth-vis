@@ -1,7 +1,5 @@
 /*https://github.com/eskimoblood/jim-knopf*/
-.p1 rect {
-	fill: blue;
-}
+
 
 .p1 g polygon {
 	opacity: 1;
@@ -9,14 +7,12 @@
 
 .p1 circle {
 	fill: lightgray;
-	stroke: blue;
 	stroke-width: 2;
 	filter: url(#dropshadow);
 }
 
 .p1 text {
 	font-size: 10px;
-	fill: blue;
 	font-family: sans-serif;
 	font-weight: 300;
 	-webkit-transition: all .1s ease-in-out;
@@ -24,8 +20,8 @@
 
 .p1 text.active {
 	/*font-size: 12px;*/
-	fill:red;
-	-webkit-transition: all .1s ease-in-out;
+	fill:black !important;
+	-webkit-transition: all .1s ease-in-out !important;
 }
 div:focus {
 	outline:none;
