@@ -77,13 +77,21 @@ var circleVis = function(p){
 			var values = waveform.getValue();
 			p.beginShape();
 			p.strokeWeight(8);
+			//mirror so that it closes at each end?
 			for (var i = 0; i < values.length; i++) {
-				var theta = p.map(i, 0, values.length, 0, 2.*Math.PI);
+				var theta = p.map(i, 0, values.length, 0, Math.PI);
 				var r = p.map(values[i], -1, 1, r0, -1*r0);
 				var x = (r + 1.1*r0)*Math.cos(theta);
 				var y = (r + 1.1*r0)*Math.sin(theta);
 				//console.log(theta, r, r0, x, y)
 				p.vertex(x, y);
+			}
+			for (var i = values.length-1; i >= 0; i--) {
+				var theta = 2.*Math.PI - p.map(i, 0, values.length, 0, Math.PI);
+				var r = p.map(values[i], -1, 1, r0, -1*r0);
+				var x = (r + 1.1*r0)*Math.cos(theta);
+				var y = (r + 1.1*r0)*Math.sin(theta);
+				p.vertex(x, y);			
 			}
 			p.endShape();
 		}
