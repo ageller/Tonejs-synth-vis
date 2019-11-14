@@ -7,6 +7,7 @@
 body {
 	background-color:var(--body-background-color);
     font-family: sans-serif;
+    overflow: hidden;
 }
 .instContainer {
 	position:absolute; 
