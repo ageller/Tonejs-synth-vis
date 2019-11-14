@@ -38,8 +38,9 @@ var synthParams = {'kick':{
 					'volume':-5,
 					'attack':0.1,
 					'decay':0.3,
-					'oscillator':'pulse',
-					'color': [255,0,0]
+					'color': [255,0,0],
+					'oscillator':'custom',
+					'partials': [10,9,8,7,6,5,4,3,2,1]				
 				},
 
 				'piano':{
@@ -48,10 +49,8 @@ var synthParams = {'kick':{
 					'volume':-6,
 					'attack':0.2,
 					'decay':0.4,
-					'oscillator':'custom',
 					'color': [255,165,0],
-					'partials': [10,9,8,7,6,5,4,3,2,1]
-					//'partials': [10,8,6,4,2,0]
+					'oscillator':'pulse',
 				},
 			};
 
@@ -153,7 +152,8 @@ function defineInst(key){
 		case 'bass':
 			var bass = new Tone.MonoSynth({
 				 "oscillator" : {
-				 	"type" : synthParams[key].oscillator
+				 	"type" : synthParams[key].oscillator,
+					"partials": synthParams[key].partials
 				} ,
 				"volume" : synthParams[key].volume,
 				"envelope" : {
@@ -169,7 +169,6 @@ function defineInst(key){
 					"octaves" : 2.6,
 				}
 			}).toMaster();
-			bass.oscillator.width.value = 0.7
 
 
 			//for visualizing
@@ -182,8 +181,8 @@ function defineInst(key){
 			//can I get the initial waveform by playing it once?
 			Tone.Offline(function(){
 				//only nodes created in this callback will be recorded
-				var oscillator = new Tone.OmniOscillator(synthParams[key].notes[0], synthParams[key].oscillator)
-				oscillator.width.value = 0.7
+				var oscillator = new Tone.Oscillator(synthParams[key].notes[0], synthParams[key].oscillator)
+				oscillator.partials = synthParams[key].partials;
 				oscillator.toMaster().start(0)
 				bassInitialWaveform = new Tone.Analyser("waveform", 1024);
 				oscillator.fan(bassInitialWaveform)
@@ -201,7 +200,6 @@ function defineInst(key){
 				"volume" : synthParams[key].volume,
 				"oscillator" : {
 					"type" : synthParams[key].oscillator,
-					"partials": synthParams[key].partials
 				} ,
 				"envelope" : {
 					"attack" : synthParams[key].attack,
@@ -209,6 +207,10 @@ function defineInst(key){
 					"release" : 2
 				},
 			}).toMaster();
+			piano.voices.forEach(function(v){
+				v.oscillator.width.value = 0.7;
+			})
+
 
 			//for visualizing
 			pianoFFT = new Tone.Analyser("fft", 1024);
@@ -220,9 +222,8 @@ function defineInst(key){
 			//can I get the initial waveform by playing it once?
 			Tone.Offline(function(){
 				//only nodes created in this callback will be recorded
-				var oscillator = new Tone.Oscillator(synthParams[key].notes[0], synthParams[key].oscillator)
-				oscillator.partials = synthParams[key].partials;
-				console.log(oscillator)
+				var oscillator = new Tone.OmniOscillator(synthParams[key].notes[0], synthParams[key].oscillator)
+				oscillator.width.value = 0.7
 				oscillator.toMaster().start(0)
 				pianoInitialWaveform = new Tone.Analyser("waveform", 1024);
 				oscillator.fan(pianoInitialWaveform)
