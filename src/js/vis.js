@@ -131,6 +131,7 @@ var waveVis = function(p){
 		//I don't love this...
 		var p1 = visHolder.id.indexOf('Wave')
 		key = visHolder.id.substring(0,p1);
+		visHolder.querySelectorAll('.p5Canvas')[0].classList.add('dragable');
 
 		var rect = visHolder.parentNode.getBoundingClientRect();
 		w = rect.width - 75;

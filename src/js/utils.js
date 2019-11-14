@@ -124,7 +124,7 @@ function createSteps(key, poly){
 
 		for (var i=0; i< nSteps; i+=1){
 			var step = document.createElement("div");
-			step.className = 'step row'+j+' col'+i;
+			step.className = 'step row'+j+' col'+i + ' dragable';
 			step.style.width =  w + 'px'; 
 			step.style.height = h + 'px'; 
 			if (note) step.dataset.note = note;
@@ -231,7 +231,7 @@ function setupControls(key, controlsList){
 	/////// Volume
 	//////////////////
 	var volumeControl = document.createElement("div")
-	volumeControl.className = 'instController';
+	volumeControl.className = 'instController dragable';
 	volumeControl.id = key+'Volume';
 	volumeControl.style.width = parentRect.width/2. - bw + 'px';
 	volumeControl.style.height = parentRect.height/2. - bw + 'px';
@@ -267,7 +267,7 @@ function setupControls(key, controlsList){
 		new Knob(document.getElementById(key+'VolumeKnob'), new Ui.P1());    
 
 		var text = document.createElement('div');
-		text.className = "playInstructions";
+		text.className = "playInstructions dragable";
 		text.style.width = volumeControl.style.width;
 		text.style.marginTop = '25px';
 		text.style.paddingLeft = '7px';
@@ -282,7 +282,7 @@ function setupControls(key, controlsList){
 	//////////////////
 	//would be nice to force this to snap to values
 	var oscillatorControl = document.createElement("div")
-	oscillatorControl.className = 'instController';
+	oscillatorControl.className = 'instController dragable';
 	oscillatorControl.id = key+'oscillator';
 	oscillatorControl.style.width = parentRect.width/2. - bw + 'px';
 	oscillatorControl.style.height = parentRect.height/2. - bw + 'px';
@@ -320,7 +320,7 @@ function setupControls(key, controlsList){
 		new Knob(document.getElementById(key+'OscillatorKnob'), new Ui.P1());    
 
 		var text = document.createElement('div');
-		text.className = "playInstructions";
+		text.className = "playInstructions dragable";
 		text.style.width = oscillatorControl.style.width;
 		text.style.marginTop = '25px';
 		text.style.paddingLeft = '90px';
@@ -334,7 +334,7 @@ function setupControls(key, controlsList){
 	///bottom-left
 	//////////////////
 	var attackControl = document.createElement("div")
-	attackControl.className = 'instController';
+	attackControl.className = 'instController dragable';
 	attackControl.id = key+'attack';
 	attackControl.style.width = parentRect.width/2. - bw + 'px';
 	attackControl.style.height = parentRect.height/2. - bw + 'px';
@@ -370,7 +370,7 @@ function setupControls(key, controlsList){
 		new Knob(document.getElementById(key+'AttackKnob'), new Ui.P1());    
 
 		var text = document.createElement('div');
-		text.className = "playInstructions";
+		text.className = "playInstructions dragable";
 		text.style.width = attackControl.style.width;
 		text.style.marginTop = '45px';
 		text.style.paddingLeft = '7px';
@@ -385,7 +385,7 @@ function setupControls(key, controlsList){
 	///bottom-right
 	//////////////////
 	var decayControl = document.createElement("div")
-	decayControl.className = 'instController';
+	decayControl.className = 'instController dragable';
 	decayControl.id = key+'decay';
 	decayControl.style.width = parentRect.width/2. - bw + 'px';
 	decayControl.style.height = parentRect.height/2. - bw + 'px';
@@ -423,7 +423,7 @@ function setupControls(key, controlsList){
 		new Knob(document.getElementById(key+'DecayKnob'), new Ui.P1());    
 
 		var text = document.createElement('div');
-		text.className = "playInstructions";
+		text.className = "playInstructions dragable";
 		text.style.width = decayControl.style.width;
 		text.style.marginTop = '45px';
 		text.style.paddingLeft = '90px';
@@ -470,7 +470,7 @@ function setupDOM(key, left, top){
 	
 	var container = document.createElement("div");
 	container.id = key+'Container';
-	container.className = 'instContainer';
+	container.className = 'instContainer dragable';
 	container.style.top = top + 'px';
 	container.style.left = left + 'px';
 
@@ -481,7 +481,7 @@ function setupDOM(key, left, top){
 
 	var controls = document.createElement("div");
 	controls.id = key+'Controls';
-	controls.className = 'instControls';
+	controls.className = 'instControls dragable';
 	container.appendChild(controls);
 
 	//I want some way to fix the shadow that is on top of this element (and make the extender shadow look better)
@@ -496,7 +496,7 @@ function setupDOM(key, left, top){
 
 	var extend = document.createElement("div");
 	extend.id = key+'Extend';
-	extend.className = 'extendedContainer transformAnimator';
+	extend.className = 'extendedContainer transformAnimator dragable';
 	extend.style.clipPath = 'inset(0px 0px -10px ' + extendedContainerWidth + 'px)'; //values are from-top, from-right, from-bottom, from-left
 	extend.style.transform = 'translate(' + (-extendedContainerWidth) + 'px,0)';
 
@@ -508,7 +508,7 @@ function setupDOM(key, left, top){
 
 	var vis = document.createElement("div");
 	vis.id = key+"Vis";
-	vis.className = 'instVis';
+	vis.className = 'instVis dragable';
 	container.appendChild(vis);
 
 	body.appendChild(container);
@@ -523,6 +523,71 @@ function setupDOM(key, left, top){
 	extend.style.marginLeft = -parentRect.width/2. + 'px';
 	extend.style.borderRadius = '0 ' + h + 'px ' + h +'px 0';
 	
+	//for movement
+	container.dataset.left0 = parseFloat(container.style.left);
+	container.dataset.top0 = parseFloat(container.style.top);
+	addHammer(container);
+
 	showHideExtendedControls(container)
+
+}
+///////////////////////
+//for touch/mouse events
+///////////////////////
+function addHammer(elem) {
+
+	var hammerOptions = {
+	/*
+	touchAction: 'auto'
+	*/
+	};
+
+	var mc = new Hammer.Manager(elem, hammerOptions);
+	mc.add(new Hammer.Pan({ threshold: 0, pointers: 0 }));
+	mc.add(new Hammer.Press({ event:"press", time:0 }));
+	mc.on("pan", onPan);
+	mc.on("panend", onPanend)
+	mc.on("press", onPress)
+	mc.on("pressup", onPressup)
+
+	function onPress(e){
+		if (e.target.classList.contains('dragable')) {
+			elem.dataset.xpos = e.center.x;
+			elem.dataset.ypos = e.center.y;
+			elem.dataset.left0 = parseFloat(elem.style.left);
+			elem.dataset.top0 = parseFloat(elem.style.top);
+		}
+	}
+
+	function onPan(e) {
+		//need to exclude events that are on buttons
+		if (e.target.classList.contains('dragable')) moveObj(e, elem);
+	}
+
+	function onPanend(e) {
+		elem.dataset.xpos = e.center.x;
+		elem.dataset.ypos = e.center.y;
+		elem.dataset.left0 = parseFloat(elem.style.left);
+		elem.dataset.top0 = parseFloat(elem.style.top);
+	}
+	function onPressup(e) {
+		elem.dataset.xpos = e.center.x;
+		elem.dataset.ypos = e.center.y;
+		elem.dataset.left0 = parseFloat(elem.style.left);
+		elem.dataset.top0 = parseFloat(elem.style.top);
+	}
+
+}
+function moveObj(event, elem){
+	if (!elem.dataset.xpos) elem.dataset.xpos = event.center.x;
+	if (!elem.dataset.ypos) elem.dataset.ypos = event.center.y;
+	var dx = elem.dataset.xpos - event.center.x;
+	var dy = elem.dataset.ypos - event.center.y;
+
+	var left = elem.dataset.left0;
+	var top = elem.dataset.top0;
+
+	elem.style.left = (left - dx) + 'px';
+	elem.style.top = (top - dy) + 'px';
 
 }
