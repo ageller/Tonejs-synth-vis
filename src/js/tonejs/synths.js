@@ -20,6 +20,11 @@ var synthParams = {'kick':{
 					'decay':0.8,
 					'oscillator':'sine',
 					'color': [0,0,255],
+					'left':0,
+					'top':50,
+					'seed':1.111,
+					'starMesh':null,
+					'coronaMesh':null,
 				},
 
 				'snare':{
@@ -29,7 +34,12 @@ var synthParams = {'kick':{
 					'attack':0.001,
 					'decay':0.2,
 					'oscillator':'sine',
-					'color': [0,255,0]
+					'color': [0,255,0],
+					'left':0,
+					'top':300,
+					'seed':2.222,
+					'starMesh':null,
+					'coronaMesh':null,
 				},
 
 				'bass':{
@@ -40,7 +50,12 @@ var synthParams = {'kick':{
 					'decay':0.3,
 					'color': [255,0,0],
 					'oscillator':'custom',
-					'partials': [10,9,8,7,6,5,4,3,2,1]				
+					'partials': [10,9,8,7,6,5,4,3,2,1],				
+					'left':800,
+					'top':50,
+					'seed':3.333,
+					'starMesh':null,
+					'coronaMesh':null,
 				},
 
 				'piano':{
@@ -51,6 +66,11 @@ var synthParams = {'kick':{
 					'decay':0.4,
 					'color': [255,165,0],
 					'oscillator':'pulse',
+					'left':800,
+					'top':300,
+					'seed':4.444,
+					'starMesh':null,
+					'coronaMesh':null,
 				},
 			};
 
@@ -278,10 +298,11 @@ function repeat(time) {
 
 
 
-function setupInst(key, x, y, controlsList, poly){
+function setupInst(key, controlsList, poly){
+
 
 	//the DOM elements
-	setupDOM(key, x, y);
+	setupDOM(key, synthParams[key].left, synthParams[key].top);
 
 	//the instrument
 	defineInst(key);
@@ -294,11 +315,11 @@ function setupInst(key, x, y, controlsList, poly){
 
 }
 
-function init(){
-	setupInst('kick', 0, 50, ['volume', 'attack', 'decay', 'mute'], false);
-	setupInst('snare', 0, 300, ['volume', 'attack', 'decay', 'mute'], false);
-	setupInst('bass', 800, 50, ['volume', 'attack', 'decay', 'mute'], false);
-	setupInst('piano', 800, 300, ['volume', 'attack', 'decay', 'mute'], true);
+function initTonejs(){
+	setupInst('kick', ['volume', 'attack', 'decay', 'mute'], false);
+	setupInst('snare', ['volume', 'attack', 'decay', 'mute'], false);
+	setupInst('bass', ['volume', 'attack', 'decay', 'mute'], false);
+	setupInst('piano', ['volume', 'attack', 'decay', 'mute'], true);
 
 	loadPreset();
 
@@ -308,8 +329,8 @@ function init(){
 	Tone.Transport.bpm.value = nSteps*6.;
 }
 
-window.onload = function() {
-	init();
+function tonejsStart(){
+	initTonejs();
 	defineGUI();
 	Tone.Transport.scheduleRepeat(repeat, nSteps+'n'); //for step sequencing	
 }

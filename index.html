@@ -15,8 +15,16 @@
 			<script src="src/lib/knob.js"></script> <!-- https://github.com/eskimoblood/jim-knopf, but a slight edit on my end -->
     		<script src="src/lib/hammer.min.js"></script>
 
+			<!-- three.js resources -->
+			<script src="src/lib/three.min.js"></script>
+			<script src="src/lib/THREEx.WindowResize.js"></script>
+
 	</head>
 	<body>	
+
+        <!-- This will contain the WebGL canvas -->
+        <div id="WebGLContainer" style="z-index:-1"></div>
+
 		<div id="playControl" class="material-icons playControls playControlsHover" style="left:0px; font-size:50px">play_arrow</div>
 		<div id="numSteps" class="playControls" style="left:50px; width:75px; font-size:50px; line-height:50px">16</div>
 		<div id="addSteps" class="material-icons playControls halfPlayControls playControlsHover" style="left:125px;">arrow_drop_up</div>
@@ -29,12 +37,23 @@
 		</div> -->
 
 
-		<script src="src/js/utils.js"></script>
-		<script src="src/js/gui.js"></script>
-		<script src="src/js/synths.js"></script>
-		<script src="src/js/presets.js"></script>
-		<script src="src/js/vis.js"></script>
-		<script src="src/js/p1.js"></script>
+		<script src="src/js/tonejs/utils.js"></script>
+		<script src="src/js/tonejs/gui.js"></script>
+		<script src="src/js/tonejs/synths.js"></script>
+		<script src="src/js/tonejs/presets.js"></script>
+		<script src="src/js/tonejs/vis.js"></script>
+		<script src="src/js/tonejs/p1.js"></script>
+
+		<script src="src/js/threejs/drawStar.js"></script>
+		<script src="src/js/threejs/render.js"></script>
+
+		<script src="src/js/init.js"></script>
+
+		<!-- shaders -->
+		<script src="src/shaders/vertex.glsl.js"></script>
+		<script src="src/shaders/starVertex.glsl.js"></script>
+		<script src="src/shaders/starFragment.glsl.js"></script>
+		<script src="src/shaders/coronaFragment.glsl.js"></script>
 
 		<!-- for the knobs -->
 		<svg>

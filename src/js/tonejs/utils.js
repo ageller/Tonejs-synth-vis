@@ -590,4 +590,14 @@ function moveObj(event, elem){
 	elem.style.left = (left - dx) + 'px';
 	elem.style.top = (top - dy) + 'px';
 
+	//get the key
+	var pos = elem.id.indexOf('Container')
+	var key = elem.id.substring(0,pos);
+	var posScreen = new THREE.Vector3((left - dx)+50+100, (top - dy)+50+100, 0); //50px margin, 200x200px size
+	posWorld = screenXYto3D(posScreen)
+
+	synthParams[key].starMesh.position.set(posWorld.x, posWorld.y, posWorld.z);
+	synthParams[key].coronaMesh.material.uniforms.posX.value = posWorld.x;
+	synthParams[key].coronaMesh.material.uniforms.posY.value = posWorld.y;
+
 }
