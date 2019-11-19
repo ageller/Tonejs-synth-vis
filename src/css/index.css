@@ -85,7 +85,7 @@ body {
 	height:300px;
 	padding:0px;
 	margin:0px;
-	z-index:-1;
+	/*z-index:-1;*/
 }
 .extendedContainer {
 	background-color:var(--background-color);

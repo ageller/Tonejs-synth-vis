@@ -554,7 +554,8 @@ function addHammer(elem) {
 	mc.on("press", onPress)
 	mc.on("pressup", onPressup)
 
-	var offsetX , offsetY;
+	var offsetX = [0];
+	var offsetY = [0];
 	var pos = elem.id.indexOf('Container')
 	var key = elem.id.substring(0,pos);
 
@@ -618,7 +619,7 @@ function moveObj(event, elem, offsetX, offsetY){
 	posWorld = screenXYto3D(posScreen)
 	elem.dataset.meshPosX = posWorld.x;
 	elem.dataset.meshPosY = posWorld.y;
-	
+
 	synthParams[key].starMesh.forEach(function(m,i){m.position.set(posWorld.x - offsetX[i], posWorld.y - offsetY[i], posWorld.z)});
 	synthParams[key].coronaMesh.forEach(function(m,i){m.material.uniforms.posX.value = posWorld.x - offsetX[i]});
 	synthParams[key].coronaMesh.forEach(function(m,i){m.material.uniforms.posY.value = posWorld.y - offsetY[i]});
