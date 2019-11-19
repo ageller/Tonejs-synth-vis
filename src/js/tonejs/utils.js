@@ -526,6 +526,10 @@ function setupDOM(key, left, top){
 	//for movement
 	container.dataset.left0 = parseFloat(container.style.left);
 	container.dataset.top0 = parseFloat(container.style.top);
+	container.dataset.meshPosX0 = 0.;
+	container.dataset.meshPosY0 = 0.;
+	container.dataset.meshPosX = 0.;
+	container.dataset.meshPosY = 0.;	
 	addHammer(container);
 
 	showHideExtendedControls(container)
@@ -550,18 +554,32 @@ function addHammer(elem) {
 	mc.on("press", onPress)
 	mc.on("pressup", onPressup)
 
+	var offsetX , offsetY;
+	var pos = elem.id.indexOf('Container')
+	var key = elem.id.substring(0,pos);
+
 	function onPress(e){
 		if (e.target.classList.contains('dragable')) {
 			elem.dataset.xpos = e.center.x;
 			elem.dataset.ypos = e.center.y;
 			elem.dataset.left0 = parseFloat(elem.style.left);
 			elem.dataset.top0 = parseFloat(elem.style.top);
+
+			var posScreen = new THREE.Vector3(parseFloat(elem.style.left)+50+100, parseFloat(elem.style.top)+50+100, 0); //50px margin, 200x200px size
+			posWorld = screenXYto3D(posScreen)
+
+			offsetX = [];
+			offsetY = [];
+			synthParams[key].starMesh.forEach(function(m){
+				offsetX.push(posWorld.x - m.position.x);
+				offsetY.push(posWorld.y - m.position.y);
+			});
 		}
 	}
 
 	function onPan(e) {
 		//need to exclude events that are on buttons
-		if (e.target.classList.contains('dragable')) moveObj(e, elem);
+		if (e.target.classList.contains('dragable')) moveObj(e, elem, offsetX, offsetY);
 	}
 
 	function onPanend(e) {
@@ -569,16 +587,19 @@ function addHammer(elem) {
 		elem.dataset.ypos = e.center.y;
 		elem.dataset.left0 = parseFloat(elem.style.left);
 		elem.dataset.top0 = parseFloat(elem.style.top);
+
 	}
 	function onPressup(e) {
 		elem.dataset.xpos = e.center.x;
 		elem.dataset.ypos = e.center.y;
 		elem.dataset.left0 = parseFloat(elem.style.left);
 		elem.dataset.top0 = parseFloat(elem.style.top);
+
+
 	}
 
 }
-function moveObj(event, elem){
+function moveObj(event, elem, offsetX, offsetY){
 	if (!elem.dataset.xpos) elem.dataset.xpos = event.center.x;
 	if (!elem.dataset.ypos) elem.dataset.ypos = event.center.y;
 	var dx = elem.dataset.xpos - event.center.x;
@@ -595,9 +616,85 @@ function moveObj(event, elem){
 	var key = elem.id.substring(0,pos);
 	var posScreen = new THREE.Vector3((left - dx)+50+100, (top - dy)+50+100, 0); //50px margin, 200x200px size
 	posWorld = screenXYto3D(posScreen)
+	elem.dataset.meshPosX = posWorld.x;
+	elem.dataset.meshPosY = posWorld.y;
+	
+	synthParams[key].starMesh.forEach(function(m,i){m.position.set(posWorld.x - offsetX[i], posWorld.y - offsetY[i], posWorld.z)});
+	synthParams[key].coronaMesh.forEach(function(m,i){m.material.uniforms.posX.value = posWorld.x - offsetX[i]});
+	synthParams[key].coronaMesh.forEach(function(m,i){m.material.uniforms.posY.value = posWorld.y - offsetY[i]});
 
-	synthParams[key].starMesh.position.set(posWorld.x, posWorld.y, posWorld.z);
-	synthParams[key].coronaMesh.material.uniforms.posX.value = posWorld.x;
-	synthParams[key].coronaMesh.material.uniforms.posY.value = posWorld.y;
+}
 
+//////////////////////////////
+/// binary orbit
+/////////////////////////////
+
+
+function getOrbitPos(xb,m1,m2,semi,ecc,omega,pi,zi,phase){
+//from Jarrod's orbit.f code with some modifications
+//units of Rsun
+	gma = 2942.206217504419 //solRad3 / (d2 solMass)
+  
+
+//Set values at apocentre. 
+	var xorb = new Array(2);
+	var yorb = new Array(2);
+	xorb[0] = semi*(1.0 + ecc);
+	xorb[1] = 0.0;
+
+//Set transformation elements (Brouwer & Clemence p. 35).
+//;also Murray & Dermott page 51
+//;O=pi
+//;w=omega
+//;I=zi
+	var px = new Array(3);
+	var qx = new Array(3);
+	var f = phase*2.*Math.PI;
+	px[0] = Math.cos(pi)*Math.cos(omega+f) - Math.sin(pi)*Math.sin(omega+f)*Math.cos(zi);
+	qx[0] =-Math.sin(pi)*Math.cos(omega+f) - Math.cos(pi)*Math.sin(omega+f)*Math.cos(zi);
+	//px[1] = Math.cos(pi)*Math.sin(omega+phase) + Math.sin(pi)*Math.cos(omega+phase)*Math.cos(zi);
+	px[1] = Math.sin(pi)*Math.cos(omega+f) + Math.cos(pi)*Math.sin(omega+f)*Math.cos(zi);
+	//qx[1] =-Math.sin(pi)*Math.sin(omega+phase) + Math.cos(pi)*Math.cos(omega+phase)*Math.cos(zi);
+	qx[1] =-Math.cos(pi)*Math.cos(omega+f) + Math.sin(pi)*Math.sin(omega+f)*Math.cos(zi);
+	px[2] = Math.sin(omega+f)*Math.sin(zi)
+	qx[2] = Math.cos(omega+f)*Math.sin(zi)
+// Transform to relative variables.
+	var xrel = new Array(3);
+	for (var k = 0; k<3; k++){
+		xrel[k] = px[k]*xorb[0] + qx[k]*xorb[1];
+	}
+
+// Set positions for each component (pc and km/s).
+	var xsb = new Array(2);
+	for (var i = 0; i < xsb.length; i++) {
+		xsb[i] = new Array(3);
+	}
+	for (var k = 0; k<3; k++){
+		xsb[0][k] = xb[k] + m2*xrel[k]/(m1+m2)
+		xsb[1][k] = xsb[0][k] - xrel[k]
+	}
+
+	return xsb;
+}
+
+function createOrbit(mesh, m1,m2,semi,ecc,omega,pi,zi, offset = [0,0,0], nPhase = 100.){
+
+	//this works if I position initially at equal distances from the center
+	xb = new Array(3);
+	xb[0] = (mesh[0].position.x + mesh[1].position.x)/2. + offset[0];
+	xb[1] = (mesh[0].position.y + mesh[1].position.y)/2. + offset[1];
+	xb[2] = (mesh[0].position.z + mesh[1].position.z)/2. + offset[2]; 
+
+	var dPhase = 1./nPhase; 
+	var pos1 = new Array(nPhase);
+	var pos2 = new Array(nPhase);
+	var phase = 0;
+	for (var i=0; i<nPhase; i++){
+		pos = getOrbitPos(xb,m1,m2,semi,ecc,omega,pi,zi,phase)
+		pos1[i] = pos[0];
+		pos2[i] = pos[1];
+		phase += dPhase;
+	}
+
+	return {'position1':pos1, 'position2':pos2}
 }

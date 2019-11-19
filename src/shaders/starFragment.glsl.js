@@ -12,7 +12,11 @@ uniform float starTemp;
 uniform float sTeff;
 uniform float Teffac;
 uniform float SSalpha;
-uniform float exagColors;
+
+uniform float convectionNoiseFrequency;
+uniform float spotNoiseFrequency;
+uniform float spotNoiseSize;
+uniform float spotNoiseMult;
 
 uniform float seed;
 
@@ -102,15 +106,13 @@ void main()
 	vec3 pNorm = vNormal + 10.*vec3(0.0, 0.0, uTime + seed);
 
 	//fractal noise (can play with these)
-	float n1 = (noise(pNorm, 5, 70., 0.7, 0) + 1.) * 0.7; //regular
+	float n1 = (noise(pNorm, 5, convectionNoiseFrequency, 0.7, 0) + 1.) * 0.7; //regular
 
 	// Sunspots
-	float s = 0.3;
-	float frequency = 5.5;///(radius); //some dependence on the size of starspots with star radius (could be more sophisticated here)
 	float threshold = 0.15;// limit number of spots
-	float t1 = snoise(pNorm * frequency) - s;
-	float t2 = snoise((pNorm + 30.) * frequency) - s;
-	float ss = (max(t1 * t2, threshold) - threshold) * 1.5;
+	float t1 = snoise(pNorm * spotNoiseFrequency) - spotNoiseSize;
+	float t2 = snoise((pNorm + 30.) * spotNoiseFrequency) - spotNoiseSize;
+	float ss = (max(t1 * t2, threshold) - threshold) * spotNoiseMult;
 
 	// Accumulate total noise
 	float n = n1 - ss;

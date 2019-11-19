@@ -33,10 +33,10 @@ function pos3DtoScreenXY(pos){
 	return vector;
 }   
 
-function drawStar(key, radius=1, Teff=3000, Teffac = 1., coronaMult=3)
+function drawStar(key, radius=1,  offsetX = 0, offsetY = 0, Teff=3000, Teffac = 1., convectionNoiseFrequency = 70., spotNoiseFrequency = 5.5, spotNoiseSize = 0.3, spotNoiseMult = 1.5, coronaMult=3, seed=null)
 {
 	//this is not working
-	var posScreen = new THREE.Vector3(synthParams[key].left+50+100, synthParams[key].top+50+100, 0); //50px margin, 200x200px size
+	var posScreen = new THREE.Vector3(synthParams[key].left+50+100+offsetX, synthParams[key].top+50+100+offsetY, 0); //50px margin, 200x200px size
 	posWorld = screenXYto3D(posScreen)
 
 
@@ -47,7 +47,9 @@ function drawStar(key, radius=1, Teff=3000, Teffac = 1., coronaMult=3)
 	var coronaAlpha = 1.;
 
 	var bbTex = new THREE.TextureLoader().load( "src/textures/bb.png" );
-
+	if (!seed){
+		var seed = synthParams[key].seed;
+	}
 	//corona on plane
 	var geometry = new THREE.PlaneGeometry(WebGLparams.width0, WebGLparams.height0);
 	var coronaMaterial =  new THREE.ShaderMaterial( {
@@ -63,7 +65,7 @@ function drawStar(key, radius=1, Teff=3000, Teffac = 1., coronaMult=3)
 			SSalpha: {value: useSSalpha},
 			posX: {value:posWorld.x},
 			posY: {value:posWorld.y},
-			seed: {value:synthParams[key].seed}
+			seed: {value:seed}
 		},
 
 		vertexShader: myVertexShader,
@@ -79,7 +81,7 @@ function drawStar(key, radius=1, Teff=3000, Teffac = 1., coronaMult=3)
 	mesh.position.set(0,0,0); 
 	mesh.lookAt( WebGLparams.camera.position)
 	WebGLparams.scene.add(mesh);
-	synthParams[key].coronaMesh = mesh;
+	synthParams[key].coronaMesh.push(mesh);
 
 	// star as sphere	
 	var geometry = new THREE.SphereGeometry( radius, 32, 32 );
@@ -92,8 +94,12 @@ function drawStar(key, radius=1, Teff=3000, Teffac = 1., coronaMult=3)
 			sTeff: {value: smTeff},
 			Teffac: {value: Teffac},
 			SSalpha: {value: useSSalpha },
+			convectionNoiseFrequency: {value: convectionNoiseFrequency}, 
+			spotNoiseFrequency: {value: spotNoiseFrequency}, 
+			spotNoiseSize: {value: spotNoiseSize},
+			spotNoiseMult: {value: spotNoiseMult},
 			cameraCenter: {value: WebGLparams.camera.position},
-			seed: {value:synthParams[key].seed}
+			seed: {value:seed}
 		},
 
 		vertexShader: starVertexShader,
@@ -106,7 +112,7 @@ function drawStar(key, radius=1, Teff=3000, Teffac = 1., coronaMult=3)
 	var mesh = new THREE.Mesh( geometry, starMaterial );
 	mesh.position.set(posWorld.x,posWorld.y,0); 
 	WebGLparams.scene.add(mesh);
-	synthParams[key].starMesh = mesh;
+	synthParams[key].starMesh.push(mesh);
 
 
 }

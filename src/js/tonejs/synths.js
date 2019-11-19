@@ -19,12 +19,12 @@ var synthParams = {'kick':{
 					'attack':0.1,
 					'decay':0.8,
 					'oscillator':'sine',
-					'color': [0,0,255],
+					'color': [255,165,0],
 					'left':0,
 					'top':50,
 					'seed':1.111,
-					'starMesh':null,
-					'coronaMesh':null,
+					'starMesh':[],
+					'coronaMesh':[],
 				},
 
 				'snare':{
@@ -38,8 +38,8 @@ var synthParams = {'kick':{
 					'left':200,
 					'top':300,
 					'seed':2.222,
-					'starMesh':null,
-					'coronaMesh':null,
+					'starMesh':[],
+					'coronaMesh':[],
 				},
 
 				'bass':{
@@ -48,14 +48,14 @@ var synthParams = {'kick':{
 					'volume':-5,
 					'attack':0.1,
 					'decay':0.3,
-					'color': [255,0,0],
+					'color': [0,0,255],
 					'oscillator':'custom',
 					'partials': [10,9,8,7,6,5,4,3,2,1],				
 					'left':800,
 					'top':50,
 					'seed':3.333,
-					'starMesh':null,
-					'coronaMesh':null,
+					'starMesh':[],
+					'coronaMesh':[],
 				},
 
 				'piano':{
@@ -64,13 +64,14 @@ var synthParams = {'kick':{
 					'volume':-6,
 					'attack':0.2,
 					'decay':0.4,
-					'color': [255,165,0],
+					'color': [255,0,0],
 					'oscillator':'pulse',
 					'left':1000,
 					'top':300,
 					'seed':4.444,
-					'starMesh':null,
-					'coronaMesh':null,
+					'starMesh':[],
+					'coronaMesh':[],
+					'orbit':{'position1':[[0,0,0]],'position2':[[0,0,0]]},
 				},
 			};
 
