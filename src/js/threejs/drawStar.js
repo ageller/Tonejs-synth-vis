@@ -33,7 +33,7 @@ function pos3DtoScreenXY(pos){
 	return vector;
 }   
 
-function drawStar(key, radius=1, Teff=3000, coronaMult=3)
+function drawStar(key, radius=1, Teff=3000, Teffac = 1., coronaMult=3)
 {
 	//this is not working
 	var posScreen = new THREE.Vector3(synthParams[key].left+50+100, synthParams[key].top+50+100, 0); //50px margin, 200x200px size
@@ -42,7 +42,6 @@ function drawStar(key, radius=1, Teff=3000, coronaMult=3)
 
 	var ifac = 0;
 	var smTeff = 5780.;
-	var Teffac = 1.;
 	var useSSalpha = 1.;
 	var coronaP = 0.3;
 	var coronaAlpha = 1.;

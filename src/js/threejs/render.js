@@ -67,6 +67,13 @@ function animateWebGL(time) {
 		synthParams[k].starMesh.material.uniforms.uTime.value = time/WebGLparams.timeFac;
 		synthParams[k].coronaMesh.material.uniforms.uTime.value = time/WebGLparams.timeFac;
 	})
+	if ('bass' in repeatList){ //RR Lyrae (should probably smooth out the waveform, and clip the end so that it is symmetric)
+		var l = visParams['bass'].initialWaveformValue.length;
+		var rFac = 1. + 0.1*visParams['bass'].initialWaveformValue[parseInt(Math.round(time/10.) % l)];
+		//console.log(1. + rFac)
+		synthParams['bass'].starMesh.scale.set(rFac, rFac, rFac);
+		synthParams['bass'].coronaMesh.material.uniforms.Rout.value = rFac;
+	}
 }
 
 //this is called to start everything
@@ -79,7 +86,7 @@ function WebGLStart(){
 	var r = 0.4;
 	drawStar('kick', r);
 	drawStar('snare',r);
-	drawStar('bass', r);
+	drawStar('bass', r, 7000, 10.);
 	drawStar('piano',r);
 
 //begin the animation

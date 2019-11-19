@@ -12,6 +12,7 @@ uniform float starTemp;
 uniform float sTeff;
 uniform float Teffac;
 uniform float SSalpha;
+uniform float exagColors;
 
 uniform float seed;
 
@@ -83,7 +84,7 @@ void main()
 	float useTemp = clamp( (starTemp - sTeff) * Teffac + sTeff, 1000., 19000.);
 	vec3 compensatedStarColor = texture2D(bb, vec2(clamp( ((useTemp - 1000.)/19000.), 0., 1.)), 0.5 ).rgb;
 
-	gl_FragColor = vec4(compensatedStarColor, 1.);
+    gl_FragColor = vec4(compensatedStarColor, 1.);
 
 	vec2 fromCenter = abs(vPosition.xy);
 	float dist = length(fromCenter);
@@ -120,6 +121,7 @@ void main()
 	gl_FragColor.rgb *= n;
 
 	gl_FragColor.a *= SSalpha;
+
 
 }
 `;
