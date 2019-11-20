@@ -37,7 +37,7 @@ function drawStar(key, radius=1,  offsetX = 0, offsetY = 0, Teff=3000, Teffac = 
 {
 	//this is not working
 	var posScreen = new THREE.Vector3(synthParams[key].left+50+100+offsetX, synthParams[key].top+50+100+offsetY, 0); //50px margin, 200x200px size
-	posWorld = screenXYto3D(posScreen)
+	var posWorld = screenXYto3D(posScreen)
 
 
 	var ifac = 0;
@@ -78,6 +78,7 @@ function drawStar(key, radius=1,  offsetX = 0, offsetY = 0, Teff=3000, Teffac = 
 
 
 	var mesh = new THREE.Mesh( geometry, coronaMaterial );
+	mesh.name = key+"Corona";
 	mesh.position.set(0,0,0); 
 	mesh.lookAt( WebGLparams.camera.position)
 	WebGLparams.scene.add(mesh);
@@ -98,6 +99,7 @@ function drawStar(key, radius=1,  offsetX = 0, offsetY = 0, Teff=3000, Teffac = 
 			spotNoiseFrequency: {value: spotNoiseFrequency}, 
 			spotNoiseSize: {value: spotNoiseSize},
 			spotNoiseMult: {value: spotNoiseMult},
+			bfac: {value: 1.},
 			cameraCenter: {value: WebGLparams.camera.position},
 			seed: {value:seed}
 		},
@@ -110,9 +112,44 @@ function drawStar(key, radius=1,  offsetX = 0, offsetY = 0, Teff=3000, Teffac = 
 	} );
 
 	var mesh = new THREE.Mesh( geometry, starMaterial );
+	mesh.name = key+"Star";
 	mesh.position.set(posWorld.x,posWorld.y,0); 
 	WebGLparams.scene.add(mesh);
 	synthParams[key].starMesh.push(mesh);
 
 
+}
+
+function createContactBinary(key){
+	//combine the geometries and use the material from the first one
+	//first remove the 2 stars from the scene
+	var selectedObject = WebGLparams.scene.getObjectByName(key+'Star');
+	WebGLparams.scene.remove( selectedObject );
+	var selectedObject = WebGLparams.scene.getObjectByName(key+'Star');
+	WebGLparams.scene.remove( selectedObject );
+
+	//then offset the stars, and combine the vertices to a single mesh
+	var i = 0
+	var p1 = synthParams[key].orbit.position1[i];
+	var p2 = synthParams[key].orbit.position2[i];
+	var mean = []
+	for (var i =0; i<3; i++) mean.push((p1[i] + p2[i])/2.);
+
+	//combine these into a single geometry
+	var geometry = new THREE.Geometry();	
+	synthParams[key].starMesh[0].geometry.applyMatrix( new THREE.Matrix4().makeTranslation(p1[0] - mean[0], p1[1] - mean[1], p1[2] - mean[2]) );
+	synthParams[key].starMesh[1].geometry.applyMatrix( new THREE.Matrix4().makeTranslation(p2[0] - mean[0], p2[1] - mean[1], p2[2] - mean[2]) );
+	geometry.merge(synthParams[key].starMesh[0].geometry, synthParams[key].starMesh[0].matrix);
+	geometry.merge(synthParams[key].starMesh[1].geometry, synthParams[key].starMesh[1].matrix);
+
+	//use the original material, but this is not great because of the limb darkening...
+	var material = synthParams[key].starMesh[0].material;
+	material.uniforms.bfac.value = 0; //no limb darkening
+
+	var mesh = new THREE.Mesh(geometry, material);
+	var posScreen = new THREE.Vector3(synthParams[key].left+50+100, synthParams[key].top+50+100, 0); //50px margin, 200x200px size
+	var posWorld = screenXYto3D(posScreen)
+	mesh.position.set(posWorld.x,posWorld.y,0); 
+	WebGLparams.scene.add(mesh);
+	synthParams[key].starMesh = [mesh];
 }

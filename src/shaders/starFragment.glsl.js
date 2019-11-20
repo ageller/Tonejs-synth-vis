@@ -17,6 +17,7 @@ uniform float convectionNoiseFrequency;
 uniform float spotNoiseFrequency;
 uniform float spotNoiseSize;
 uniform float spotNoiseMult;
+uniform float bfac;
 
 uniform float seed;
 
@@ -92,13 +93,7 @@ void main()
 
 	vec2 fromCenter = abs(vPosition.xy);
 	float dist = length(fromCenter);
-	float brightness = 0.;
 
-	//limb darkening
-	float u = 0.56;
-	float Rstar2 = 1.0;
-	float r2 = dist/radius * dist/radius;
-	brightness = (1. - u*(1. - sqrt((Rstar2 - r2)/Rstar2)));
 
 	float cameraDistance = clamp(length(cameraPosition)/10., 1., 100.);
 
@@ -118,7 +113,13 @@ void main()
 	float n = n1 - ss;
 
 
-	gl_FragColor.rgb = vec3(mix(vec3(1.0, 1.0, 1.0), gl_FragColor.rgb, clamp(1.1 - brightness ,0. , 1.)));
+	//limb darkening
+	float brightness = 0.;
+	float u = 0.56;
+	float Rstar2 = 1.0;
+	float r2 = dist/radius * dist/radius;
+	brightness = (1. - u*(1. - sqrt((Rstar2 - r2)/Rstar2)));
+	gl_FragColor.rgb = vec3(mix(vec3(1.0, 1.0, 1.0), gl_FragColor.rgb, clamp(1.1 - bfac*brightness ,0. , 1.)));
 
 	gl_FragColor.rgb *= n;
 

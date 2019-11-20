@@ -64,7 +64,10 @@ function animateWebGL(time) {
 	WebGLparams.renderer.render( WebGLparams.scene, WebGLparams.camera );
 
 	repeatList.forEach(function(k){
-		synthParams[k].starMesh.forEach(function(m){m.material.uniforms.uTime.value = time/WebGLparams.timeFac});
+		synthParams[k].starMesh.forEach(function(m){
+			m.material.uniforms.uTime.value = time/WebGLparams.timeFac;
+			//m.rotation.set(0., (50.*time/WebGLparams.timeFac) % (2.*Math.PI), 0.)
+		});
 		synthParams[k].coronaMesh.forEach(function(m){m.material.uniforms.uTime.value = time/WebGLparams.timeFac});
 	})
 	if (repeatList.indexOf('bass') != -1){ //RR Lyrae (should probably smooth out the waveform, and clip the end so that it is symmetric)
@@ -79,15 +82,20 @@ function animateWebGL(time) {
 	binaryKeys.forEach(function(key){
 		if (repeatList.indexOf(key) != -1){ //binary
 			var l = synthParams[key].orbit.position1.length;
-			var i = parseInt(Math.round(time/20.) % l);
+			var i = parseInt(Math.round(time/40.) % l);
 			var p1 = synthParams[key].orbit.position1[i];
 			var p2 = synthParams[key].orbit.position2[i];
 			var elem = document.getElementById(key+'Container');
 			var dx = parseFloat(elem.dataset.meshPosX) - parseFloat(elem.dataset.meshPosX0);
 			var dy = parseFloat(elem.dataset.meshPosY) - parseFloat(elem.dataset.meshPosY0);
 			if (p1 && p2){
-				synthParams[key].starMesh[0].position.set(p1[0] + dx, p1[1] + dy, p1[2] + 1.); //adding the 1 here so that it doesn't get clipped
-				synthParams[key].starMesh[1].position.set(p2[0] + dx, p2[1] + dy, p2[2] + 1.);	
+				if (key == 'piano'){
+					synthParams[key].starMesh[0].position.set(p1[0] + dx, p1[1] + dy, p1[2] + 1.); //adding the 1 here so that it doesn't get clipped
+					synthParams[key].starMesh[1].position.set(p2[0] + dx, p2[1] + dy, p2[2] + 1.);	
+				}
+				if (key == 'kick'){
+					synthParams[key].starMesh[0].rotation.set(0., i/l*2.*Math.PI, 0.)
+				}
 				synthParams[key].coronaMesh[0].material.uniforms.posX.value = p1[0] + dx;
 				synthParams[key].coronaMesh[0].material.uniforms.posY.value = p1[1] + dy;
 				synthParams[key].coronaMesh[1].material.uniforms.posX.value = p2[0] + dx;
@@ -110,7 +118,7 @@ function WebGLStart(){
 	drawStar('snare',r, 0., 0., 5000, 1, 70, 5.5, 0.5, 0.);
 	drawStar('bass', r, 0., 0., 7000, 10.,55, 4, 0.7, 0.1);
 
-//contact binary (I should try to make this into a single combined mesh)
+//contact binary, first create the stars, them combine into single mesh
 	drawStar('kick',0.8*r, 0, 0., 3000);
 	drawStar('kick',0.8*r, 0, 0., 3000, 1., 70., 5.5, 0.3,1.5, 3, 2.345);
 	synthParams['kick'].orbit = createOrbit(synthParams['kick'].starMesh, 1., 1., 0.3, 0., 0., 0., Math.PI/2., [0, 0, 0]);
@@ -119,8 +127,9 @@ function WebGLStart(){
 	elem.dataset.meshPosY0 = synthParams['kick'].starMesh[0].position.y;
 	elem.dataset.meshPosX = synthParams['kick'].starMesh[0].position.x;
 	elem.dataset.meshPosY = synthParams['kick'].starMesh[0].position.y;
+	createContactBinary('kick');
 
-//normal binary (could make this a quad)
+//normal binary (could make this a quadruple)
 	drawStar('piano',0.7*r, 0, 0., 2000);
 	drawStar('piano',0.3*r, 0, 0., 1000, 1., 70., 5.5, 0.3,1.5, 3, 1.234);
 	synthParams['piano'].orbit = createOrbit(synthParams['piano'].starMesh, 1., 0.1, 0.5, 0., 0., Math.PI/4., Math.PI/2., [-0.15, -0.15, 0]);
