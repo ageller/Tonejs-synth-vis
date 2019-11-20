@@ -18,7 +18,10 @@ uniform float spotNoiseFrequency;
 uniform float spotNoiseSize;
 uniform float spotNoiseMult;
 uniform float bfac;
-
+uniform float rX;
+uniform float rY;
+uniform float rZ;
+uniform mat4 objectRotation;
 uniform float seed;
 
 //from https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
@@ -80,6 +83,19 @@ float noise(vec3 position, int octaves, float frequency, float persistence, int 
 
 
 
+const float PI = 3.141592653589793;
+
+// axis should be normalized
+mat3 rotationMatrix(vec3 axis, float angle)
+{
+	float s = sin(angle);
+	float c = cos(angle);
+	float oc = 1.0 - c;
+	
+	return mat3(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,
+				oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,
+				oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c);
+}
 
 
 
@@ -91,14 +107,14 @@ void main()
 
     gl_FragColor = vec4(compensatedStarColor, 1.);
 
-	vec2 fromCenter = abs(vPosition.xy);
+    vec4 pos = objectRotation*vec4(vPosition, 1.);
+	vec2 fromCenter = abs(pos.xy);
 	float dist = length(fromCenter);
 
-
-	float cameraDistance = clamp(length(cameraPosition)/10., 1., 100.);
-
-	vec3 cNorm = normalize(cameraPosition);
-	vec3 pNorm = vNormal + 10.*vec3(0.0, 0.0, uTime + seed);
+	mat3 rotX = rotationMatrix(vec3(1,0,0), rX); 
+	mat3 rotY = rotationMatrix(vec3(0,1,0), rY); 
+	mat3 rotZ = rotationMatrix(vec3(0,0,1), rZ); 
+	vec3 pNorm = rotX*rotY*rotZ*(vNormal + 10.*vec3(0.0, 0.0, uTime + seed));
 
 	//fractal noise (can play with these)
 	float n1 = (noise(pNorm, 5, convectionNoiseFrequency, 0.7, 0) + 1.) * 0.7; //regular

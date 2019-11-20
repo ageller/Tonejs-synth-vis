@@ -85,6 +85,8 @@ function drawStar(key, radius=1,  offsetX = 0, offsetY = 0, Teff=3000, Teffac = 
 	synthParams[key].coronaMesh.push(mesh);
 
 	// star as sphere	
+	var rotMat = new THREE.Matrix4();
+	rotMat.makeRotationY(0);
 	var geometry = new THREE.SphereGeometry( radius, 32, 32 );
 	var starMaterial =  new THREE.ShaderMaterial( {
 		uniforms: {
@@ -100,7 +102,10 @@ function drawStar(key, radius=1,  offsetX = 0, offsetY = 0, Teff=3000, Teffac = 
 			spotNoiseSize: {value: spotNoiseSize},
 			spotNoiseMult: {value: spotNoiseMult},
 			bfac: {value: 1.},
-			cameraCenter: {value: WebGLparams.camera.position},
+			rX: {value: 0.},
+			rY: {value: 0.},
+			rZ: {value: 0.},
+			objectRotation: {value: rotMat},
 			seed: {value:seed}
 		},
 

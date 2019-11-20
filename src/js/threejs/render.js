@@ -66,9 +66,19 @@ function animateWebGL(time) {
 	repeatList.forEach(function(k){
 		synthParams[k].starMesh.forEach(function(m){
 			m.material.uniforms.uTime.value = time/WebGLparams.timeFac;
-			//m.rotation.set(0., (50.*time/WebGLparams.timeFac) % (2.*Math.PI), 0.)
+			var theta = (50.*time/WebGLparams.timeFac) % (2.*Math.PI);
+			m.rotation.set(0., theta, 0.)
+			var rotMat = new THREE.Matrix4();
+			rotMat.makeRotationY(theta);
+			// if (k == "piano") {
+			// 	var axis = new THREE.Vector3(1, 1, 0);
+			// 	rotMat.makeRotationAxis(axis.normalize(), theta);
+			// }
+			m.material.uniforms.objectRotation.value = rotMat;
 		});
-		synthParams[k].coronaMesh.forEach(function(m){m.material.uniforms.uTime.value = time/WebGLparams.timeFac});
+		synthParams[k].coronaMesh.forEach(function(m){
+			m.material.uniforms.uTime.value = time/WebGLparams.timeFac;
+		});
 	})
 	if (repeatList.indexOf('bass') != -1){ //RR Lyrae (should probably smooth out the waveform, and clip the end so that it is symmetric)
 		var l = visParams['bass'].initialWaveformValue.length;
@@ -132,7 +142,8 @@ function WebGLStart(){
 //normal binary (could make this a quadruple)
 	drawStar('piano',0.7*r, 0, 0., 2000);
 	drawStar('piano',0.3*r, 0, 0., 1000, 1., 70., 5.5, 0.3,1.5, 3, 1.234);
-	synthParams['piano'].orbit = createOrbit(synthParams['piano'].starMesh, 1., 0.1, 0.5, 0., 0., Math.PI/4., Math.PI/2., [-0.15, -0.15, 0]);
+	synthParams['piano'].orbit = createOrbit(synthParams['piano'].starMesh, 1., 0.1, 0.5, 0., 0., Math.PI/4., -Math.PI/2., [-0.15, -0.15, 0]);
+	//synthParams['piano'].orbit = createOrbit(synthParams['piano'].starMesh, 1., 0.1, 0.5, 0., 0., 0., -Math.PI/2., [-0.15, -0.15, 0]);
 	var elem = document.getElementById('pianoContainer');
 	elem.dataset.meshPosX0 = synthParams['piano'].starMesh[0].position.x;
 	elem.dataset.meshPosY0 = synthParams['piano'].starMesh[0].position.y;
