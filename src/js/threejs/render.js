@@ -67,14 +67,16 @@ function animateWebGL(time) {
 		synthParams[k].starMesh.forEach(function(m){
 			m.material.uniforms.uTime.value = time/WebGLparams.timeFac;
 			var theta = (50.*time/WebGLparams.timeFac) % (2.*Math.PI);
-			m.rotation.set(0., theta, 0.)
+			var axis = new THREE.Vector3(0, 1, 0);
+			if (k == "piano") {
+			 	axis = new THREE.Vector3(-1, 1, 0);
+			}
 			var rotMat = new THREE.Matrix4();
-			rotMat.makeRotationY(theta);
-			// if (k == "piano") {
-			// 	var axis = new THREE.Vector3(1, 1, 0);
-			// 	rotMat.makeRotationAxis(axis.normalize(), theta);
-			// }
+		 	rotMat.makeRotationAxis(axis.normalize(), theta);
+			var euler = new THREE.Euler().setFromRotationMatrix(rotMat);
+			m.setRotationFromEuler(euler);
 			m.material.uniforms.objectRotation.value = rotMat;
+
 		});
 		synthParams[k].coronaMesh.forEach(function(m){
 			m.material.uniforms.uTime.value = time/WebGLparams.timeFac;
