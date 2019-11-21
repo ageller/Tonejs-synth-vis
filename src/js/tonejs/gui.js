@@ -56,7 +56,7 @@ function modifySteps(add){
 		promise.then(function(){
 			initAllSteps();
 			Tone.Transport.bpm.value = nSteps*BPMfac;
-			loadPreset();
+			loadPreset(currentPreset);
 		});
 	}
 }

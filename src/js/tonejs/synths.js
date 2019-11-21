@@ -6,6 +6,7 @@ var stepIndex = 0;
 var nSteps = 16
 var	beat = nSteps/8;
 var BPMfac = 6.;
+var currentPreset = 2;
 
 var extendedContainerWidth = 500; //pixels
 var stepHeight = 100; //pixels 
@@ -86,7 +87,10 @@ var haveCircleVis = {'kick':false, 'snare':false, 'bass':false, 'piano':false};
 //taken from the events example
 function defineInst(key){
 
-
+	//this seems necessary to avoid ringing that happens occasionally, but it also means that I can't smoothly change the knobs
+	if (synthParams[key].instrument){
+		synthParams[key].instrument.dispose();
+	}
 	//Note: Volume is in dB
 	switch (key) {
 		case 'kick':
@@ -233,7 +237,6 @@ function defineInst(key){
 				v.oscillator.width.value = 0.7;
 			})
 
-
 			//for visualizing
 			pianoFFT = new Tone.Analyser("fft", 1024);
 			pianoWaveform = new Tone.Analyser("waveform", 1024);
@@ -323,7 +326,7 @@ function initTonejs(){
 	setupInst('bass', ['volume', 'attack', 'decay', 'mute'], false);
 	setupInst('piano', ['volume', 'attack', 'decay', 'mute'], true);
 
-	loadPreset(2);
+	loadPreset(currentPreset);
 
 	defineVisParms();
 

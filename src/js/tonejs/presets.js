@@ -1,6 +1,7 @@
 function loadPreset(preset=1){
 	//clear all steps first
 	clearSteps();
+	currentPreset = preset;
 	var foo = document.getElementsByClassName('preset')
 	for (var i=0; i< foo.length; i++)foo[i].classList.remove('playControlsClicked');
 	document.getElementById('preset'+preset).classList.add('playControlsClicked');
