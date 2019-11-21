@@ -12,9 +12,12 @@ function defineGUI(){
 
 	});
 
-	document.getElementById('clear').addEventListener('mousedown', clearSteps);
-	document.getElementById('preset1').addEventListener('mousedown', function(){loadPreset(1)});
-	document.getElementById('preset2').addEventListener('mousedown', function(){loadPreset(2)});
+	var presets = document.getElementsByClassName('preset');
+	for (var i =0; i<presets.length; i++){
+		var val = parseInt(presets[i].innerHTML);
+		presets[i].addEventListener('mousedown', loadPreset);
+	}
+
 	document.getElementById('addSteps').addEventListener('mousedown', function(){modifySteps(1)});
 	document.getElementById('minusSteps').addEventListener('mousedown', function(){modifySteps(-1)});
 	document.getElementById('addBPM').addEventListener('mousedown', function(){modifyBPM(1)});
@@ -56,7 +59,7 @@ function modifySteps(add){
 		promise.then(function(){
 			initAllSteps();
 			Tone.Transport.bpm.value = nSteps*BPMfac;
-			loadPreset(currentPreset);
+			loadPreset(null, currentPreset);
 		});
 	}
 }

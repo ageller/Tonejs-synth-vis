@@ -331,7 +331,7 @@ function initTonejs(){
 	setupInst('bass', ['volume', 'attack', 'decay', 'mute'], false);
 	setupInst('piano', ['volume', 'attack', 'decay', 'mute'], true);
 
-	loadPreset(currentPreset);
+	loadPreset(null, currentPreset);
 
 	defineVisParms();
 
