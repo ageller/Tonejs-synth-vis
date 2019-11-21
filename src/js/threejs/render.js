@@ -152,7 +152,6 @@ function WebGLStart(){
 
 //draw everything
 	var r = 250./parseFloat(window.innerHeight);
-	console.log(r)
 	drawStar('snare',r, 0., 0., 5000, 1, 70, 5.5, 0.5, 0.);
 	drawStar('bass', r, 0., 0., 7000, 10.,30, 4, 0.7, 0.1);
 
