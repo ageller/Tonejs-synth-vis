@@ -156,6 +156,8 @@ function setupSteps(key, poly=false){
 function initAllSteps(){
 	createSteps('kick', false);
 	createSteps('snare', false);
+	createSteps('bass', false);
+	createSteps('piano', true);
 }
 
 //////////////////////////////////////
@@ -479,6 +481,11 @@ function setupDOM(key, left, top){
 	shadow.className = 'instControls dropShadow7';
 	container.appendChild(shadow);
 
+	//add an invisible div just under the circle container for rotating
+	var rotator = document.createElement("div");
+	rotator.className = 'instRotator rotatable';
+	container.appendChild(rotator);
+
 	var controls = document.createElement("div");
 	controls.id = key+'Controls';
 	controls.className = 'instControls dragable';
@@ -560,11 +567,12 @@ function addHammer(elem) {
 	var key = elem.id.substring(0,pos);
 
 	function onPress(e){
+		elem.dataset.xpos = e.center.x;
+		elem.dataset.ypos = e.center.y;
+		elem.dataset.left0 = parseFloat(elem.style.left);
+		elem.dataset.top0 = parseFloat(elem.style.top);
 		if (e.target.classList.contains('dragable')) {
-			elem.dataset.xpos = e.center.x;
-			elem.dataset.ypos = e.center.y;
-			elem.dataset.left0 = parseFloat(elem.style.left);
-			elem.dataset.top0 = parseFloat(elem.style.top);
+
 
 			var posScreen = new THREE.Vector3(parseFloat(elem.style.left)+50+100, parseFloat(elem.style.top)+50+100, 0); //50px margin, 200x200px size
 			posWorld = screenXYto3D(posScreen)
@@ -581,6 +589,7 @@ function addHammer(elem) {
 	function onPan(e) {
 		//need to exclude events that are on buttons
 		if (e.target.classList.contains('dragable')) moveObj(e, elem, offsetX, offsetY);
+		//if (e.target.classList.contains('rotatable')) rotateObj(e, elem); //not working -- would need some other way to do this
 	}
 
 	function onPanend(e) {
@@ -588,7 +597,6 @@ function addHammer(elem) {
 		elem.dataset.ypos = e.center.y;
 		elem.dataset.left0 = parseFloat(elem.style.left);
 		elem.dataset.top0 = parseFloat(elem.style.top);
-
 	}
 	function onPressup(e) {
 		elem.dataset.xpos = e.center.x;
@@ -624,6 +632,28 @@ function moveObj(event, elem, offsetX, offsetY){
 	synthParams[key].coronaMesh.forEach(function(m,i){m.material.uniforms.posX.value = posWorld.x - offsetX[i]});
 	synthParams[key].coronaMesh.forEach(function(m,i){m.material.uniforms.posY.value = posWorld.y - offsetY[i]});
 
+}
+function rotateObj(event, elem){
+	//this is not working in the way I would like (and is unfinished).  Maybe I would need some dom element that doesn't rotate to drag on?
+	var rect = elem.getBoundingClientRect();
+	//50 because of the margins.  I'd like to get this directly from the DOM... (could take out of css and put inline)
+	var centerX = parseFloat(elem.dataset.left0) + 50. + rect.width/2.; 
+	var centerY = parseFloat(elem.dataset.top0) + 50. + rect.height/2.;
+
+	var x0 = centerX - (event.center.x - event.deltaX);
+	var y0 = centerY - (event.center.y - event.deltaY);
+	var rad0 = Math.sqrt(x0*x0 + y0*y0);
+	var theta0 =  Math.acos(x0/rad0);
+
+	var x = centerX - event.center.x;
+	var y = centerY - event.center.y;
+	var rad = Math.sqrt(x*x + y*y);
+	var theta =  Math.acos(x/rad);
+
+	var dtheta = theta0 - theta;
+	elem.style.transform = 'rotate('+dtheta+'rad)';
+
+	console.log(elem, theta, theta0, dtheta, x0, y0, rad0, rad);
 }
 
 //////////////////////////////

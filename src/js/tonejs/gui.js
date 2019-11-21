@@ -14,10 +14,30 @@ function defineGUI(){
 
 	document.getElementById('clear').addEventListener('mousedown', clearSteps);
 	document.getElementById('preset1').addEventListener('mousedown', function(){loadPreset(1)});
+	document.getElementById('preset2').addEventListener('mousedown', function(){loadPreset(2)});
 	document.getElementById('addSteps').addEventListener('mousedown', function(){modifySteps(1)});
 	document.getElementById('minusSteps').addEventListener('mousedown', function(){modifySteps(-1)});
+	document.getElementById('addBPM').addEventListener('mousedown', function(){modifyBPM(1)});
+	document.getElementById('minusBPM').addEventListener('mousedown', function(){modifyBPM(-1)});
+
+	document.getElementById('numSteps').innerHTML = nSteps;
+	document.getElementById('BPM').innerHTML = nSteps*BPMfac;
+
 }
 
+function modifyBPM(add){
+	var oldBPM = nSteps*BPMfac;
+	var oldBPMfac = 0 + BPMfac;
+	var newBPM = oldBPM + add;
+	BPMfac = newBPM/(nSteps);
+
+	//console.log(newBPM, BPMfac)
+
+	document.getElementById('BPM').innerHTML = nSteps*BPMfac
+
+	Tone.Transport.bpm.value = nSteps*BPMfac;
+
+}
 function modifySteps(add){
 	oldSteps = nSteps
 	nSteps += add;
@@ -30,12 +50,12 @@ function modifySteps(add){
 
 	if (oldSteps != nSteps){
 		var promise = new Promise(function(resolve, reject){
-			check = removeSteps()
-			if (check) resolve("done")
+			check = removeSteps();
+			if (check) resolve("done");
 		})
 		promise.then(function(){
 			initAllSteps();
-			Tone.Transport.bpm.value = nSteps*6.;
+			Tone.Transport.bpm.value = nSteps*BPMfac;
 			loadPreset();
 		});
 	}

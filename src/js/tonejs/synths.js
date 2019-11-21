@@ -5,6 +5,7 @@ var piano, pianoWaveform, pianoFFT, pianoInitialWaveform;;
 var stepIndex = 0;
 var nSteps = 16
 var	beat = nSteps/8;
+var BPMfac = 6.;
 
 var extendedContainerWidth = 500; //pixels
 var stepHeight = 100; //pixels 
@@ -322,12 +323,12 @@ function initTonejs(){
 	setupInst('bass', ['volume', 'attack', 'decay', 'mute'], false);
 	setupInst('piano', ['volume', 'attack', 'decay', 'mute'], true);
 
-	loadPreset();
+	loadPreset(2);
 
 	defineVisParms();
 
 	//set the tempo 
-	Tone.Transport.bpm.value = nSteps*6.;
+	Tone.Transport.bpm.value = nSteps*BPMfac;
 }
 
 function tonejsStart(){
