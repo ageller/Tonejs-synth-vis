@@ -23,6 +23,23 @@ function defineVisParms(){
 			'fft':pianoFFT,
 		}
 	}
+
+	//sort the RR Lyrae curve to have max at the first position
+	//(currently this does not change the vis, but does change the timing in three.js)
+	if (visParams['bass']['initialWaveformValue']){
+		var arr = visParams['bass']['initialWaveformValue'];
+		var amax = arr[0];
+		arr.forEach(function(a){
+			if (a > amax) amax = a;
+		});
+		var imax = arr.indexOf(amax);
+		var newArr = [];
+		arr.forEach(function(a,i){
+			var ind = parseInt((i + imax) % arr.length);
+			newArr.push(arr[ind]);
+		});
+		visParams['bass']['initialWaveformValue'] = newArr;
+	}
 }
 
 var circleVis = function(p){ 
