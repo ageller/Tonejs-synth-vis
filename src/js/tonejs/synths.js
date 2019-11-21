@@ -7,6 +7,7 @@ var nSteps = 16
 var	beat = nSteps/8;
 var BPMfac = 6.;
 var currentPreset = 2;
+var toneTime = 0;
 
 var extendedContainerWidth = 500; //pixels
 var stepHeight = 100; //pixels 
@@ -299,6 +300,7 @@ function repeat(time) {
 		}
 	});
 	stepIndex = (stepIndex + 1) % nSteps;
+	toneTime = time;
 
 }
 

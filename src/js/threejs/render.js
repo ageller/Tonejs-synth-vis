@@ -60,13 +60,22 @@ function initWebGL(){
 
 //this is the animation loop
 function animateWebGL(time) {
+
+	var measuresPerSecond = 60./Tone.Transport.bpm.value;
+	var useTime = Tone.Transport.seconds;
+
+	//var useTime = time;
+	//console.log(useTime, Tone.Transport.seconds, 60.*4./(Tone.Transport.bpm.value))
+
 	requestAnimationFrame( animateWebGL );
 	WebGLparams.renderer.render( WebGLparams.scene, WebGLparams.camera );
 
+	var hitsPerSecond = 4.*measuresPerSecond;
+	var rotTime = (useTime % hitsPerSecond)/hitsPerSecond;
 	repeatList.forEach(function(k){
 		synthParams[k].starMesh.forEach(function(m){
-			m.material.uniforms.uTime.value = time/WebGLparams.timeFac;
-			var theta = (50.*time/WebGLparams.timeFac) % (2.*Math.PI);
+			m.material.uniforms.uTime.value = useTime/100.;
+			var theta = rotTime*2.*Math.PI;
 			var axis = new THREE.Vector3(0, 1, 0);
 			if (k == "piano") {
 			 	axis = new THREE.Vector3(-1, 1, 0);
@@ -79,12 +88,19 @@ function animateWebGL(time) {
 
 		});
 		synthParams[k].coronaMesh.forEach(function(m){
-			m.material.uniforms.uTime.value = time/WebGLparams.timeFac;
+			m.material.uniforms.uTime.value = useTime/WebGLparams.timeFac;
 		});
 	})
-	if (repeatList.indexOf('bass') != -1 && visParams['bass'].initialWaveformValue){ //RR Lyrae (should probably smooth out the waveform, and clip the end so that it is symmetric)
+
+	//RR Lyrae (should probably smooth out the waveform, and clip the end so that it is symmetric)
+	if (repeatList.indexOf('bass') != -1 && visParams['bass'].initialWaveformValue){ 
+		var hitsPerSecond = 12.*measuresPerSecond;
+		var bassTime = (useTime % hitsPerSecond)/hitsPerSecond;
+
 		var l = visParams['bass'].initialWaveformValue.length;
-		var rFac = 1. + 0.1*visParams['bass'].initialWaveformValue[parseInt(Math.round(time/10.) % l)];
+		//var i = parseInt(Math.round(useTime/10.) % l);
+		var i = parseInt(Math.round(bassTime*l));
+		var rFac = 1. + 0.1*visParams['bass'].initialWaveformValue[i];
 		//console.log(1. + rFac)
 		synthParams['bass'].starMesh[0].scale.set(rFac, rFac, rFac);
 		synthParams['bass'].coronaMesh[0].material.uniforms.Rout.value = rFac;
@@ -94,7 +110,16 @@ function animateWebGL(time) {
 	binaryKeys.forEach(function(key){
 		if (repeatList.indexOf(key) != -1){ //binary
 			var l = synthParams[key].orbit.position1.length;
-			var i = parseInt(Math.round(time/40.) % l);
+			//var i = parseInt(Math.round(useTime/40.) % l);
+			if (key == 'piano'){
+				var hitsPerSecond = 4.*measuresPerSecond;
+				var binTime = (useTime % hitsPerSecond)/hitsPerSecond;
+			}
+			if (key == 'kick'){
+				var hitsPerSecond = 2.*measuresPerSecond;
+				var binTime = (useTime % hitsPerSecond)/hitsPerSecond;
+			}
+			var i = parseInt(Math.round(binTime*l));
 			var p1 = synthParams[key].orbit.position1[i];
 			var p2 = synthParams[key].orbit.position2[i];
 			var elem = document.getElementById(key+'Container');
