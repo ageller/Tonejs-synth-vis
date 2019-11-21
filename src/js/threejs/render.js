@@ -82,7 +82,7 @@ function animateWebGL(time) {
 			m.material.uniforms.uTime.value = time/WebGLparams.timeFac;
 		});
 	})
-	if (repeatList.indexOf('bass') != -1){ //RR Lyrae (should probably smooth out the waveform, and clip the end so that it is symmetric)
+	if (repeatList.indexOf('bass') != -1 && visParams['bass'].initialWaveformValue){ //RR Lyrae (should probably smooth out the waveform, and clip the end so that it is symmetric)
 		var l = visParams['bass'].initialWaveformValue.length;
 		var rFac = 1. + 0.1*visParams['bass'].initialWaveformValue[parseInt(Math.round(time/10.) % l)];
 		//console.log(1. + rFac)
@@ -126,14 +126,14 @@ function WebGLStart(){
 	initWebGL();
 
 //draw everything
-	var r = 0.4;
+	var r = 0.25;
 	drawStar('snare',r, 0., 0., 5000, 1, 70, 5.5, 0.5, 0.);
-	drawStar('bass', r, 0., 0., 7000, 10.,55, 4, 0.7, 0.1);
+	drawStar('bass', r, 0., 0., 7000, 10.,30, 4, 0.7, 0.1);
 
 //contact binary, first create the stars, them combine into single mesh
-	drawStar('kick',0.8*r, 0, 0., 3000);
-	drawStar('kick',0.8*r, 0, 0., 3000, 1., 70., 5.5, 0.3,1.5, 3, 2.345);
-	synthParams['kick'].orbit = createOrbit(synthParams['kick'].starMesh, 1., 1., 0.3, 0., 0., 0., Math.PI/2., [0, 0, 0]);
+	drawStar('kick',0.8*r, 0, 0., 3000, 1., 10., 5.5, 0.3, 0., 3);
+	drawStar('kick',0.8*r, 0, 0., 3000, 1., 10., 5.5, 0.3, 0., 3, 2.345);
+	synthParams['kick'].orbit = createOrbit(synthParams['kick'].starMesh, 1., 1., 0.8*r, 0., 0., 0., Math.PI/2., [0, 0, 2]);
 	var elem = document.getElementById('kickContainer');
 	elem.dataset.meshPosX0 = synthParams['kick'].starMesh[0].position.x;
 	elem.dataset.meshPosY0 = synthParams['kick'].starMesh[0].position.y;
@@ -144,7 +144,7 @@ function WebGLStart(){
 //normal binary (could make this a quadruple)
 	drawStar('piano',0.7*r, 0, 0., 2000);
 	drawStar('piano',0.3*r, 0, 0., 1000, 1., 70., 5.5, 0.3,1.5, 3, 1.234);
-	synthParams['piano'].orbit = createOrbit(synthParams['piano'].starMesh, 1., 0.1, 0.5, 0., 0., Math.PI/4., -Math.PI/2., [-0.15, -0.15, 0]);
+	synthParams['piano'].orbit = createOrbit(synthParams['piano'].starMesh, 1., 0.1, 1.2*r, 0., 0., Math.PI/4., -Math.PI/2., [-r/3., -r/3., 0]);
 	//synthParams['piano'].orbit = createOrbit(synthParams['piano'].starMesh, 1., 0.1, 0.5, 0., 0., 0., -Math.PI/2., [-0.15, -0.15, 0]);
 	var elem = document.getElementById('pianoContainer');
 	elem.dataset.meshPosX0 = synthParams['piano'].starMesh[0].position.x;

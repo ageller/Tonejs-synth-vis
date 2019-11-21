@@ -13,6 +13,9 @@ var stepHeight = 100; //pixels
 var oscillatorMap = {0:"sine", 1:"square", 2:"triangle", 3:"sawtooth"};
 var oscillatorMapReverse = {"sine":0, "square":1, "triangle":2, "sawtooth":3};
 
+//to fix in error that comes up at the start
+bassInitialWaveform = {'getValue':function(){return null}};
+
 //pulse oscillator looks like EB, with large width value
 var synthParams = {'kick':{
 					'instrument':null,

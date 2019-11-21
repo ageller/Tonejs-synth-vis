@@ -13,7 +13,7 @@ function defineVisParms(){
 		},
 		'bass':{
 			'initialWaveform':bassInitialWaveform,
-			'initialWaveformValue':bassInitialWaveform.getValue(), //this gives an error on load
+			'initialWaveformValue':bassInitialWaveform.getValue(), 
 			'waveform':bassWaveform,
 			'fft':bassFFT,
 		},
