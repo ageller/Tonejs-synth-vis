@@ -126,13 +126,13 @@ function animateWebGL(time) {
 			var dx = parseFloat(elem.dataset.meshPosX) - parseFloat(elem.dataset.meshPosX0);
 			var dy = parseFloat(elem.dataset.meshPosY) - parseFloat(elem.dataset.meshPosY0);
 			if (p1 && p2){
-				if (key == 'piano'){
+				//if (key == 'piano'){
 					synthParams[key].starMesh[0].position.set(p1[0] + dx, p1[1] + dy, p1[2] + 1.); //adding the 1 here so that it doesn't get clipped
 					synthParams[key].starMesh[1].position.set(p2[0] + dx, p2[1] + dy, p2[2] + 1.);	
-				}
-				if (key == 'kick'){
-					synthParams[key].starMesh[0].rotation.set(0., i/l*2.*Math.PI, 0.)
-				}
+				// }
+				// if (key == 'kick'){
+				// 	synthParams[key].starMesh[0].rotation.set(0., i/l*2.*Math.PI, 0.)
+				// }
 				synthParams[key].coronaMesh[0].material.uniforms.posX.value = p1[0] + dx;
 				synthParams[key].coronaMesh[0].material.uniforms.posY.value = p1[1] + dy;
 				synthParams[key].coronaMesh[1].material.uniforms.posX.value = p2[0] + dx;
@@ -158,13 +158,13 @@ function WebGLStart(){
 //contact binary, first create the stars, them combine into single mesh
 	drawStar('kick',0.8*r, 0, 0., 3000, 1., 10., 5.5, 0.3, 0., 3);
 	drawStar('kick',0.8*r, 0, 0., 3000, 1., 10., 5.5, 0.3, 0., 3, 2.345);
-	synthParams['kick'].orbit = createOrbit(synthParams['kick'].starMesh, 1., 1., 0.8*r, 0., 0., 0., Math.PI/2., [0, 0, 2]);
+	synthParams['kick'].orbit = createOrbit(synthParams['kick'].starMesh, 1., 1., 0.8*r, 0., 0., 0., Math.PI/2., [0, 0, 0.8*r]);
 	var elem = document.getElementById('kickContainer');
 	elem.dataset.meshPosX0 = synthParams['kick'].starMesh[0].position.x;
 	elem.dataset.meshPosY0 = synthParams['kick'].starMesh[0].position.y;
 	elem.dataset.meshPosX = synthParams['kick'].starMesh[0].position.x;
 	elem.dataset.meshPosY = synthParams['kick'].starMesh[0].position.y;
-	createContactBinary('kick');
+	//createContactBinary('kick');
 
 //normal binary (could make this a quadruple)
 	drawStar('piano',0.7*r, 0, 0., 2000);
@@ -176,6 +176,7 @@ function WebGLStart(){
 	elem.dataset.meshPosY0 = synthParams['piano'].starMesh[0].position.y;
 	elem.dataset.meshPosX = synthParams['piano'].starMesh[0].position.x;
 	elem.dataset.meshPosY = synthParams['piano'].starMesh[0].position.y;
+
 //begin the animation
 	animateWebGL();
 }
